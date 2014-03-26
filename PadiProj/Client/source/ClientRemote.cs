@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Master
+namespace Client
 {
-    class Program
+    class ClientRemote
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }
