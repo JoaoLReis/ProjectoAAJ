@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Interfaces
 {
-    public class RemoteInterface
+    public interface RemoteServerInterface
     {
+
+    }
+
+    public interface RemoteClientInterface
+    {
+
     }
 }
