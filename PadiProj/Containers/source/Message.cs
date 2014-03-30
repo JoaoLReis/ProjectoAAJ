@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Containers
+namespace Containers.source
 {
-    public class Class1
+    public class Message
     {
     }
 }
