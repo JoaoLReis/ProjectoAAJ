@@ -47,14 +47,38 @@ namespace Master
 
         }
 
+        //NOTE altering the timestamp of a transaction remotely alters it?!? or do we need to return it?!?
         public Transaction putTimeStamp(Transaction t)
         {
-
+            t.setTimeStamp(genTimestamp());
+            return t;
         }
 
+        //Code to check if 2 timestamps are equal needs testing!?!?!
+      /*  private static long lastTimeStamp = DateTime.UtcNow.Ticks;
+        public static long UtcNowTicks
+        {
+            get
+            {
+                long original, newValue;
+                do
+                {
+                    original = lastTimeStamp;
+                    long now = DateTime.UtcNow.Ticks;
+                    newValue = Math.Max(now, original + 1);
+                } while (Interlocked.CompareExchange
+                             (ref lastTimeStamp, newValue, original) != original);
+
+                return newValue;
+            }
+        }*/
+
+        //Temporary function to generate a timestamp for a transaction.
         private DateTime genTimestamp()
         {
-
+            DateTime CurrentDate;
+            CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
+            return CurrentDate;
         }
     }
 }

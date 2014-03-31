@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Containers
 {
     [Serializable]
-    class Request
+    public class Request
     {
         private bool _write;
         private int _padint;
