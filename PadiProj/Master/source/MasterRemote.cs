@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Interfaces;
@@ -11,7 +12,7 @@ namespace Master
     {
         private Hashtable _serverPadInts;
 
-        private string _AvailableServer;
+        private List<string> _AvailableServer;
 
         public MasterRemote()
         {
@@ -39,12 +40,7 @@ namespace Master
         //Registers a server on master.
         public void regServer(string server)
         {
-            _AvailableServer = server;
-        }
-
-        public void checkAvailability()
-        {
-
+            _AvailableServer.Add(server);
         }
 
         //NOTE altering the timestamp of a transaction remotely alters it?!? or do we need to return it?!?
