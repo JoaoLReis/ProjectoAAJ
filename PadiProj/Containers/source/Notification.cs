@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Containers.source
+namespace Containers
 {
-    class Notification
+    [Serializable]
+    public class Notification
     {
     }
 }
