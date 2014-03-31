@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Client
 {
-    class Client
-    {
+    class Client{
+
     }
 }
