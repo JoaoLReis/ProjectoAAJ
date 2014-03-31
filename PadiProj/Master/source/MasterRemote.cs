@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Interfaces;
+using Containers.source;
 
-namespace Master.source
+namespace Master
 {
-    class MasterRemote
+    class MasterRemote : MarshalByRefObject, RemoteMasterInterface
     {
     }
 }

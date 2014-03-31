@@ -19,6 +19,8 @@ namespace Interfaces
 
     public interface RemoteMasterInterface
     {
+        public const int MasterPort = 8080;
+
         void requestServer(String urlClient);
     }
 }
