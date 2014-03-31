@@ -37,5 +37,10 @@ namespace Master
         {
 
         }
+
+        public void geTransID()
+        {
+
+        }
     }
 }

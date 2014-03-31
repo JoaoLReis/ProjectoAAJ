@@ -43,6 +43,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="source\Notification.cs" />
     <Compile Include="source\PadInt.cs" />
+    <Compile Include="source\Request.cs" />
+    <Compile Include="source\Transaction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
