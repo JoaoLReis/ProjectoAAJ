@@ -43,10 +43,5 @@ namespace Client
         {
 
         }
-
-        public class ClientChat : MarshalByRefObject, RemoteClientInterface
-        {
-            public static Form1 form;
-        }
     }
 }
