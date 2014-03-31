@@ -47,7 +47,12 @@ namespace Master
 
         }
 
-        public void geTransID()
+        public Transaction putTimeStamp(Transaction t)
+        {
+
+        }
+
+        private DateTime genTimestamp()
         {
 
         }
