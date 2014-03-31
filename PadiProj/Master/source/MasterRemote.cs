@@ -83,7 +83,7 @@ namespace Master
 
         public string requestServer(string clientUrl)
         {
-
+            return "";
         }
     }
 }
