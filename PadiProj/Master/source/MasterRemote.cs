@@ -18,16 +18,25 @@ namespace Master
             _serverPadInts = new Hashtable();
         }
 
-        public void regPadint(int id, string server)
+        //Function that tries to register a padint, returns false if the padint already exists.
+        public bool regPadint(int id, string server)
         {
-            _serverPadInts.Add(id, server);
+            if (_serverPadInts.ContainsKey(id))
+                return false;
+            else 
+            {
+                _serverPadInts.Add(id, server);
+                return true;
+            }
         }
 
-        public bool exPadint(int id)
+        //Gets a server from a padint ID.
+        public string getServer(int id)
         {
-            return _serverPadInts.ContainsKey(id);
+            return _serverPadInts[id].ToString();
         }
 
+        //Registers a server on master.
         public void regServer(string server)
         {
             _AvailableServer = server;
