@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Containers.source;
+using Containers;
 
 namespace Interfaces
 {
@@ -21,6 +21,12 @@ namespace Interfaces
     {
         public const int MasterPort = 8080;
 
-        void requestServer(String urlClient);
+        public bool regPadint(int id, string server);
+        public void regServer(string server);
+
+        public string getServer(int id);
+        public string requestServer(String urlClient);
+
+        public Transaction putTimeStamp(Transaction t);    
     }
 }

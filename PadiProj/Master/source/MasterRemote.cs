@@ -80,5 +80,10 @@ namespace Master
             CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
             return CurrentDate;
         }
+
+        public string requestServer(string clientUrl)
+        {
+
+        }
     }
 }
