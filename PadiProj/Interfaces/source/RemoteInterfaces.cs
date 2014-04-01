@@ -9,16 +9,19 @@ namespace Interfaces
 {
     public interface RemoteServerInterface
     {
-        void sendRequest(Message msg);
     }
 
     public interface RemoteClientInterface
     {
-        void receive(Message msg);
+        void receiveResponse(Message msg);
+
+        void receiveNotifications(Notification noti);
+
+        void sendRequest(Message msg);
     }
 
     public interface RemoteMasterInterface
     {
-        void requestServer(String urlClient);
+        String requestServer(String urlClient);
     }
 }

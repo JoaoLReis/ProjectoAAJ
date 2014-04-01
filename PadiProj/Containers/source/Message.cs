@@ -8,5 +8,11 @@ namespace Containers.source
 {
     public class Message
     {
+        private Boolean urlType;
+
+        internal Boolean getUrlType()
+        {
+            return this.urlType;
+        }
     }
 }

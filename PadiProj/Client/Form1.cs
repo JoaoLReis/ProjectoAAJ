@@ -19,7 +19,7 @@ namespace Client
         public Form1()
         {
             InitializeComponent();
-            ClientChat.form = this;
+            Client.form = this;
         }
 
         private void URLMaster_TextChanged(object sender, EventArgs e)
@@ -29,14 +29,17 @@ namespace Client
 
         private void Connection_Click(object sender, EventArgs e)
         {
+            Client cl = new Client();
+            cl.init("tcp://localhost:" + Int32.Parse(ClientPort.Text) + "/MyRemoteObjectName");
+
             TcpChannel client_channel = new TcpChannel(Int32.Parse(ClientPort.Text));
             ChannelServices.RegisterChannel(client_channel, true);
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(Client), "MyRemoteObjectName",
             WellKnownObjectMode.Singleton);
-            RemoteMasterInterface s = (RemoteMasterInterface)Activator.GetObject(typeof(RemoteMasterInterface)
+            RemoteMasterInterface master = (RemoteMasterInterface)Activator.GetObject(typeof(RemoteMasterInterface)
                 , URLMaster.Text);
 
-            s.requestServer("Falta criar URL do client");
+            cl.setClientUrlServer(master.requestServer(cl.getClientUrl()));
         }
 
         private void ClientPort_TextChanged(object sender, EventArgs e)
