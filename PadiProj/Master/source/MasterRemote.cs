@@ -13,6 +13,7 @@ namespace Master
         private Hashtable _serverPadInts;
         private List<string> _AvailableServer;
 
+        private DateTime _lastTimeStamp;
         private Random rnd;
 
         public MasterRemote()
@@ -49,11 +50,12 @@ namespace Master
         //NOTE altering the timestamp of a transaction remotely alters it?!? or do we need to return it?!?
         public DateTime getTimeStamp()
         {
-            return genTimestamp();
+            DateTime tmp = genTimestamp();
+            return tmp;
         }
 
         //Code to check if 2 timestamps are equal needs testing!?!?!
-      /*  private static long lastTimeStamp = DateTime.UtcNow.Ticks;
+       /* private static long lastTimeStamp = DateTime.UtcNow.Ticks;
         public static long UtcNowTicks
         {
             get
@@ -75,7 +77,7 @@ namespace Master
         private DateTime genTimestamp()
         {
             DateTime CurrentDate;
-            CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
+            CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
             return CurrentDate;
         }
 
