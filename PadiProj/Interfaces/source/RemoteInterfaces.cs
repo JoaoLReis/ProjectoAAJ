@@ -9,6 +9,9 @@ namespace Interfaces
 {
     public interface RemoteServerInterface
     {
+        void sendToServer(Message msg);
+        void registerReplica(string url);
+        void registerClient(string url);
     }
 
     public interface RemoteClientInterface

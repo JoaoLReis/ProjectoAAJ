@@ -12,12 +12,16 @@ namespace Server.source
 {
     class Server
     {
+        static int serverport = 1000;
+
+
         static void Main(string[] args)
         {
-            TcpChannel channel = new TcpChannel(8086);
+            int localport = serverport++;
+            TcpChannel channel = new TcpChannel(localport);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemoteServerInterface obj = new ServerRemote();
+            RemoteServerInterface obj = new ServerRemote(localport);
 
             RemotingConfiguration.RegisterWellKnownServiceType(
                 typeof(RemoteServerInterface),

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Interfaces;
@@ -9,37 +10,53 @@ namespace Server.source
 {
     class ServerRemote : MarshalByRefObject, RemoteServerInterface
     {
-        private Hashtable clientURL;
+        //enum CM {CLIENT, MASTER};
+        private Hashtable clientURL_transid;
+        private string clientURLs;
+
         private string ownURL;
+        private string replicaURL;
         private string masterURL;
 
-        private Array padInts;
+        private List<PadInt> padInts;
 
-        private int lastCommittedtransID;
+        private int lastCommittedtransID = 0;
 
-        private string activeTransaction;
+        private Transaction activeTransaction;
 
-        public ServerRemote()
+        private RemoteMasterInterface master;
+
+        public ServerRemote(int localport)
         {
-            clientURL = new Hashtable();
+            clientURL_transid = new Hashtable();
+            ownURL = "tcp://localhost:" + localport + "/obj";
+            padInts = new List<PadInt>();
+            master = (RemoteMasterInterface)Activator.GetObject(
+                typeof(RemoteMasterInterface),
+                "tcp://localhost:" + RemoteMasterInterface.MasterPort + "/obj");
+            master.regServer(ownURL);
         }
 
-        void send()
+        private void sendToClient(string url, Message msg)
         {
-        //send a message(to be invoked by itself)
+            //send a message(to be invoked by itself)
+            RemoteClientInterface client = (RemoteClientInterface)Activator.GetObject(
+                typeof(RemoteClientInterface), url);
+            client.receiveResponse(msg);
         }
 
+        //formerly receive
         void receive(Message msg)
         {
         //receive a message(to be invoked by others)
         }
 
-        void execute() 
+        private void execute() 
         { 
         //execute active transaction
         }
 
-        void requestTransID()
+        private void requestTransID()
         { 
         //request to the master a Transaction ID
         }
@@ -49,12 +66,7 @@ namespace Server.source
         //Start the validating proccess
         }
 
-        void registerClient() 
-        { 
-        //register a client and its transaction id in the hashtable
-        }
-
-        void registerReplica()
+        void registerReplica(string url)
         { 
         //to be invoked by a replica
         }
@@ -64,12 +76,12 @@ namespace Server.source
         //commit a transaction and send result to client
         }
 
-        void write(int padintID)
+        private void write(int padintID)
         { 
         //write a padint
         }
 
-        PadInt read() 
+        private PadInt read() 
         {
             return null;
         //read a padint
@@ -80,7 +92,7 @@ namespace Server.source
         //abort a transaction
         }
 
-        void begin() 
+        private void begin() 
         { 
         //begin a transaction
         }
