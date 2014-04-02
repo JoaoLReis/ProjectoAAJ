@@ -11,11 +11,14 @@ namespace Master
     class MasterRemote : MarshalByRefObject, RemoteMasterInterface
     {
         private Hashtable _serverPadInts;
-
         private List<string> _AvailableServer;
+
+        private Random rnd;
 
         public MasterRemote()
         {
+            rnd = new Random();
+            _AvailableServer = new List<string>;
             _serverPadInts = new Hashtable();
         }
 
@@ -78,7 +81,8 @@ namespace Master
 
         public string requestServer(string clientUrl)
         {
-            return "";
+            int r = rnd.Next(_AvailableServer.Count);
+            return _AvailableServer[r];
         }
     }
 }
