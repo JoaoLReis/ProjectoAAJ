@@ -11,11 +11,18 @@ namespace Master
     class MasterRemote : MarshalByRefObject, RemoteMasterInterface
     {
         private Hashtable _serverPadInts;
-
         private List<string> _AvailableServer;
+
+        private DateTime _lastTimeStamp;
+        private Random rnd;
+
+        private int _serverID;
 
         public MasterRemote()
         {
+            _serverID = 0;
+            rnd = new Random();
+            _AvailableServer = new List<string>;
             _serverPadInts = new Hashtable();
         }
 
@@ -38,20 +45,21 @@ namespace Master
         }
 
         //Registers a server on master.
-        public void regServer(string server)
+        public int regServer(string server)
         {
             _AvailableServer.Add(server);
+            return _serverID++;
         }
 
         //NOTE altering the timestamp of a transaction remotely alters it?!? or do we need to return it?!?
-        public Transaction putTimeStamp(Transaction t)
+        public DateTime getTimeStamp()
         {
-            t.setTimeStamp(genTimestamp());
-            return t;
+            DateTime tmp = genTimestamp();
+            return tmp;
         }
 
         //Code to check if 2 timestamps are equal needs testing!?!?!
-      /*  private static long lastTimeStamp = DateTime.UtcNow.Ticks;
+       /* private static long lastTimeStamp = DateTime.UtcNow.Ticks;
         public static long UtcNowTicks
         {
             get
@@ -73,13 +81,14 @@ namespace Master
         private DateTime genTimestamp()
         {
             DateTime CurrentDate;
-            CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("dd-MMM-yyyy"));
+            CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
             return CurrentDate;
         }
 
         public string requestServer(string clientUrl)
         {
-            return "";
+            int r = rnd.Next(_AvailableServer.Count);
+            return _AvailableServer[r];
         }
     }
 }
