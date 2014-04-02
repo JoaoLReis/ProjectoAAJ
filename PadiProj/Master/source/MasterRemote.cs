@@ -44,10 +44,9 @@ namespace Master
         }
 
         //NOTE altering the timestamp of a transaction remotely alters it?!? or do we need to return it?!?
-        public Transaction putTimeStamp(Transaction t)
+        public DateTime getTimeStamp()
         {
-            t.setTimeStamp(genTimestamp());
-            return t;
+            return genTimestamp();
         }
 
         //Code to check if 2 timestamps are equal needs testing!?!?!

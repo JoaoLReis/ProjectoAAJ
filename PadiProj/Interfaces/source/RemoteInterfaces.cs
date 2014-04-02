@@ -30,6 +30,6 @@ namespace Interfaces
         public string getServer(int id);
         public string requestServer(String urlClient);
 
-        public Transaction putTimeStamp(Transaction t);    
+        public DateTime getTimeStamp();
     }
 }
