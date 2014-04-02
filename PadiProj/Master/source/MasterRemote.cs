@@ -16,8 +16,11 @@ namespace Master
         private DateTime _lastTimeStamp;
         private Random rnd;
 
+        private int _serverID;
+
         public MasterRemote()
         {
+            _serverID = 0;
             rnd = new Random();
             _AvailableServer = new List<string>;
             _serverPadInts = new Hashtable();
@@ -42,9 +45,10 @@ namespace Master
         }
 
         //Registers a server on master.
-        public void regServer(string server)
+        public int regServer(string server)
         {
             _AvailableServer.Add(server);
+            return _serverID++;
         }
 
         //NOTE altering the timestamp of a transaction remotely alters it?!? or do we need to return it?!?

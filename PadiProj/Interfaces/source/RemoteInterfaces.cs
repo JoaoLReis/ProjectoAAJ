@@ -25,7 +25,7 @@ namespace Interfaces
         public const int MasterPort = 8080;
 
         public bool regPadint(int id, string server);
-        public void regServer(string server);
+        public int regServer(string server);
 
         public string getServer(int id);
         public string requestServer(String urlClient);
