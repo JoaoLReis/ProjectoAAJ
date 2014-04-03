@@ -85,7 +85,7 @@ namespace Master
             return CurrentDate;
         }
 
-        public string requestServer(string clientUrl)
+        public string requestServer()
         {
             int r = rnd.Next(_AvailableServer.Count);
             return _AvailableServer[r];

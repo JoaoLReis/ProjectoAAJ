@@ -7,11 +7,14 @@ using Containers;
 
 namespace Interfaces
 {
+    //#define const int MasterPort = 8080;
     public interface RemoteServerInterface
     {
         void sendToServer(Message msg);
         void registerReplica(string url);
         void registerClient(string url);
+        PadInt CreatePadInt(int uid);
+        PadInt AcessPadInt(int uid);
     }
 
     public interface RemoteClientInterface
@@ -25,14 +28,17 @@ namespace Interfaces
 
     public interface RemoteMasterInterface
     {
-        public const int MasterPort = 8080;
+        bool regPadint(int id, string server);
+        int  regServer(string server);
 
-        public bool regPadint(int id, string server);
-        public int regServer(string server);
+        string getServer(int id);
+        string requestServer();
 
-        public string getServer(int id);
-        public string requestServer(String urlClient);
+        DateTime getTimeStamp();
 
-        public DateTime getTimeStamp();
+        bool Status();
+        bool Fail(string URL);
+        bool Freeze(string URL);
+        bool Recover(string URL);
     }
 }

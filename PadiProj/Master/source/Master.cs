@@ -21,7 +21,7 @@ namespace Master
 
             RemotingConfiguration.RegisterWellKnownServiceType(
                 typeof(RemoteMasterInterface),
-                "obj",
+                "master",
                 WellKnownObjectMode.Singleton);
 
             System.Console.WriteLine("<enter> para sair...");
