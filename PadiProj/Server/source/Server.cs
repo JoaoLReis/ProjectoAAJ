@@ -12,7 +12,7 @@ namespace Server.source
 {
     class Server
     {
-        static int serverport = 1000;
+        static int serverport = 1001;
 
 
         static void Main(string[] args)
@@ -25,7 +25,7 @@ namespace Server.source
 
             RemotingConfiguration.RegisterWellKnownServiceType(
                 typeof(RemoteServerInterface),
-                "obj",
+                "Server",
                 WellKnownObjectMode.Singleton);
 
             System.Console.WriteLine("<enter> para sair...");

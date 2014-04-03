@@ -5,13 +5,30 @@ using System.Text;
 using System.Threading.Tasks;
 using Containers;
 
+
 namespace Interfaces
 {
     public interface RemoteServerInterface
     {
-        void sendToServer(Message msg);
+        void receive(Message msg);
+        
         void registerReplica(string url);
-        void registerClient(string url);
+        
+        void validate();
+
+        void status();
+
+        void commit();
+
+        void abort();
+
+        void begin();
+
+        void fail();
+
+        void freeze();
+
+        void recover();
     }
 
     public interface RemoteClientInterface
@@ -25,14 +42,13 @@ namespace Interfaces
 
     public interface RemoteMasterInterface
     {
-        public const int MasterPort = 8080;
 
-        public bool regPadint(int id, string server);
-        public int regServer(string server);
+        bool regPadint(int id, string server);
+        int regServer(string server);
 
-        public string getServer(int id);
-        public string requestServer(String urlClient);
+        string getServer(int id);
+        string requestServer(String urlClient);
 
-        public DateTime getTimeStamp();
+        DateTime getTimeStamp();
     }
 }
