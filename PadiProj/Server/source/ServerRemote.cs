@@ -33,7 +33,7 @@ namespace Server.source
             padInts = new List<PadInt>();
             master = (RemoteMasterInterface)Activator.GetObject(
                 typeof(RemoteMasterInterface),
-                "tcp://localhost:" + RemoteMasterInterface.MasterPort + "/obj");
+                "tcp://localhost:" + Interfaces.MasterPort + "/obj");
             master.regServer(ownURL);
         }
 
@@ -45,10 +45,19 @@ namespace Server.source
             client.receiveResponse(msg);
         }
 
+        private void masterMsg(string msg)
+        {
+
+        }
+
         //formerly receive
         void receive(Message msg)
         {
         //receive a message(to be invoked by others)
+            if (msg.getOwner() == masterURL)
+            {
+                masterMsg(msg.getMessage());
+            }
         }
 
         private void execute() 
@@ -59,6 +68,7 @@ namespace Server.source
         private void requestTransID()
         { 
         //request to the master a Transaction ID
+            master.getTimeStamp();
         }
 
         void validate()
@@ -92,7 +102,7 @@ namespace Server.source
         //abort a transaction
         }
 
-        private void begin() 
+        void begin() 
         { 
         //begin a transaction
         }

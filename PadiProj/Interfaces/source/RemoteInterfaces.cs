@@ -5,13 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using Containers;
 
+
 namespace Interfaces
 {
     //#define const int MasterPort = 8080;
     public interface RemoteServerInterface
     {
-        void sendToServer(Message msg);
+        void receive(Message msg);
+        
         void registerReplica(string url);
+
+        void validate();
+
+        void status();
+
+        void commit();
+
+        void abort();
+
+        void begin();
+
+        void fail();
+
+        void freeze();
+
+        void recover();
         void registerClient(string url);
         PadInt CreatePadInt(int uid);
         PadInt AcessPadInt(int uid);
