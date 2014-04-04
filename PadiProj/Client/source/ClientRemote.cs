@@ -42,8 +42,8 @@ namespace Client
                     }catch(Exception e){
                     }
                 this.setListPadInt(pi);
-                return pi;
             }
+            return pi;
         }
 
         internal void setListPadInt(PadInt p)
