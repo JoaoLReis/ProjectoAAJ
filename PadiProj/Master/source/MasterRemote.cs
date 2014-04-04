@@ -49,10 +49,10 @@ namespace Master
         }
 
         //Registers a server on master.
-        public int regServer(string server)
+        public void regServer(string server)
         {
+            Console.WriteLine("Registered server: " + server);
             _AvailableServer.Add(server);
-            return _serverID++;
         }
 
         //NOTE altering the timestamp of a transaction remotely alters it?!? or do we need to return it?!?
@@ -70,6 +70,7 @@ namespace Master
             {
                 System.Threading.Monitor.Enter(CurrentDate, ref _lockTaken);
                 CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+                Console.WriteLine("Generated timestamp: " + CurrentDate.ToString());
                 return CurrentDate;
             }
             finally
@@ -80,8 +81,19 @@ namespace Master
 
         public string requestServer()
         {
-            int r = rnd.Next(_AvailableServer.Count);
-            return _AvailableServer[r];
+            if(_AvailableServer.Count != 0)
+            {
+                
+                int r = rnd.Next(_AvailableServer.Count);
+                string URL = _AvailableServer[r];
+                Console.WriteLine("Returning available server: " + URL);
+                return URL;
+            } else
+            {
+                //TODO
+                throw new Exception();
+            }
+
         }
 
         public bool status()

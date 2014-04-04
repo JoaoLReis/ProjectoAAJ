@@ -22,11 +22,13 @@ namespace Server.source
             ChannelServices.RegisterChannel(channel, true);
 
             RemoteServerInterface obj = new ServerRemote(localport);
-
+            
             RemotingConfiguration.RegisterWellKnownServiceType(
-                typeof(RemoteServerInterface),
+                typeof(ServerRemote),
                 "Server",
                 WellKnownObjectMode.Singleton);
+
+            ((ServerRemote)obj).regToMaster();
 
             System.Console.WriteLine("<enter> para sair...");
             System.Console.ReadLine();

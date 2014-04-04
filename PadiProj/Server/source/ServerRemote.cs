@@ -35,11 +35,15 @@ namespace Server.source
             _clientURL_transid = new Hashtable();
             _ownURL = "tcp://localhost:" + localport + "/obj";
             _padInts = new List<PadIntValue>();
-            _master = (RemoteMasterInterface)Activator.GetObject(
-                typeof(RemoteMasterInterface),
-                "tcp://localhost:" + Interfaces.Constants.MasterPort + "/obj");
-            _master.regServer(_ownURL);
             _status = STATE.ALIVE;
+        }
+
+        internal void regToMaster()
+        {
+            _master = (RemoteMasterInterface)Activator.GetObject(
+            typeof(RemoteMasterInterface),
+            "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
+            _master.regServer(_ownURL);
         }
 
         private void execute() 

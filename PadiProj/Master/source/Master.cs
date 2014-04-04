@@ -20,7 +20,7 @@ namespace Master
             RemoteMasterInterface obj = new MasterRemote();
 
             RemotingConfiguration.RegisterWellKnownServiceType(
-                typeof(RemoteMasterInterface),
+                typeof(MasterRemote),
                 "master",
                 WellKnownObjectMode.Singleton);
 

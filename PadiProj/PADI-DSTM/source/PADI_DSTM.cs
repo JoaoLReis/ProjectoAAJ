@@ -103,8 +103,8 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-                //Throws an exception to the client saying the transaction aborted.
-                return false;
+                //TODO
+                throw new Exception();
             }
         }
 
@@ -116,7 +116,8 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-                return false;
+                //TODO
+                throw new Exception();
             }
         }
 
@@ -128,7 +129,8 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-                return false;
+                //TODO
+                throw new Exception();
             }
         }
 
@@ -140,7 +142,8 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-                return false;
+                //TODO
+                throw new Exception();
             }
         }
 
@@ -152,7 +155,8 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-                return false;
+                //TODO
+                throw new Exception();
             }
         }
 
@@ -168,8 +172,8 @@ namespace PADI_DSTM
             }
             catch(Exception e)
             {
-                //Testar se esta a criar um padint que ja existe.
-                return null;
+                //TODO
+                throw new Exception();
             }
         }
 
@@ -184,8 +188,8 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-                //Testar se esta a aceder a um padint que não existe.
-                return null;
+                //TODO
+                throw new Exception();
             }
         }
     }

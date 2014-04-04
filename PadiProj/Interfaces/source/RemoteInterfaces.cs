@@ -15,8 +15,7 @@ namespace Interfaces
 
     public interface RemoteServerInterface
     {
-        void receive(Message msg);
-        
+      
         void registerReplica(string url);
 
         void validate();
@@ -49,7 +48,7 @@ namespace Interfaces
     public interface RemoteMasterInterface
     {
         bool regPadint(int id, string server);
-        int  regServer(string server);
+        void  regServer(string server);
 
         string getServer(int id);
         string requestServer();

@@ -25,15 +25,13 @@ namespace Client
 
         private void Connection_Click(object sender, EventArgs e)
         {
-            
-            cl.init("tcp://localhost:" + Int32.Parse(ClientPort.Text) + "/Client");
-
             TcpChannel client_channel = new TcpChannel(Int32.Parse(ClientPort.Text));
             ChannelServices.RegisterChannel(client_channel, true);
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(ClientRemote), "Client",
             WellKnownObjectMode.Singleton);
+            
+            cl.init("tcp://localhost:" + Int32.Parse(ClientPort.Text) + "/Client");
 
-            PADI_DSTM.Library.Init();
         }
 
         private void transactionWrite_Click(object sender, EventArgs e)

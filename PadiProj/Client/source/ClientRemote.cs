@@ -10,7 +10,7 @@ namespace Client
         
         public static Form1 form;
         private String ownUrl;
-        private List<PadInt> listPadInt;
+        private List<PadInt> listPadInt = new List<PadInt>();
 
         delegate void delRSDV(String msg);
 
