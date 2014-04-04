@@ -14,8 +14,6 @@ namespace Server.source
         private Hashtable _clientURL_transid;
         private string _clientURLs;
 
-        private int _server_id;
-
         private string _ownURL;
         private string _replicaURL;
         private string _masterURL;
@@ -36,7 +34,7 @@ namespace Server.source
             _master = (RemoteMasterInterface)Activator.GetObject(
                 typeof(RemoteMasterInterface),
                 "tcp://localhost:" + Interfaces.Constants.MasterPort + "/obj");
-            _server_id = _master.regServer(_ownURL);
+            _master.regServer(_ownURL);
         }
 
         private void sendToClient(string url, Message msg)
@@ -111,7 +109,7 @@ namespace Server.source
             try
             {
                 DateTime dt = _master.getTimeStamp();
-                return( new Transaction(_server_id, dt, null));
+                return( new Transaction(dt, null));
             }
             catch(Exception e)
             {

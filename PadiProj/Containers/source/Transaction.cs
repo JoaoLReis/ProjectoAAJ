@@ -9,11 +9,10 @@ namespace Containers
     [Serializable]
     public class Transaction
     {
-        private int _id;
         private DateTime _timestamp;
         private List<Request> _requests;
 
-        public Transaction(int id, DateTime timestamp, List<Request> requests)
+        public Transaction(DateTime timestamp, List<Request> requests)
         {
             _timestamp = timestamp;
             _requests = requests;

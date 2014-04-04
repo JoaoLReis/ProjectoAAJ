@@ -18,12 +18,16 @@ namespace Master
 
         private int _serverID;
 
+        private bool _lockTaken;
+        private DateTime CurrentDate;
+
         public MasterRemote()
         {
             _serverID = 0;
             rnd = new Random();
-            _AvailableServer = new List<string>;
+            _AvailableServer = new List<string>();
             _serverPadInts = new Hashtable();
+            _lockTaken = false;
         }
 
         //Function that tries to register a padint, returns false if the padint already exists.
@@ -59,11 +63,19 @@ namespace Master
         }
 
         //Temporary function to generate a timestamp for a transaction.
+        //TESTING REQUIRED!?!
         private DateTime genTimestamp()
         {
-            DateTime CurrentDate;
-            CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
-            return CurrentDate;
+            try
+            {
+                System.Threading.Monitor.Enter(CurrentDate, ref _lockTaken);
+                CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+                return CurrentDate;
+            }
+            finally
+            {
+                System.Threading.Monitor.Exit(CurrentDate);
+            }  
         }
 
         public string requestServer()
