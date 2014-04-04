@@ -18,7 +18,7 @@ namespace Server.source
         private string replicaURL;
         private string masterURL;
 
-        private List<PadInt> padInts;
+        private List<PadIntValue> padInts;
 
         private int lastCommittedtransID = 0;
 
@@ -30,10 +30,10 @@ namespace Server.source
         {
             clientURL_transid = new Hashtable();
             ownURL = "tcp://localhost:" + localport + "/obj";
-            padInts = new List<PadInt>();
+            padInts = new List<PadIntValue>();
             master = (RemoteMasterInterface)Activator.GetObject(
                 typeof(RemoteMasterInterface),
-                "tcp://localhost:" + Interfaces.MasterPort + "/obj");
+                "tcp://localhost:" + Interfaces.Constants.MasterPort + "/obj");
             master.regServer(ownURL);
         }
 

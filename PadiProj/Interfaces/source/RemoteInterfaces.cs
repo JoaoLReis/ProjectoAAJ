@@ -8,7 +8,11 @@ using Containers;
 
 namespace Interfaces
 {
-    //#define const int MasterPort = 8080;
+    public static class Constants
+    {
+        public const int MasterPort = 8080;
+    }
+
     public interface RemoteServerInterface
     {
         void receive(Message msg);
@@ -31,8 +35,8 @@ namespace Interfaces
 
         void recover();
         void registerClient(string url);
-        PadInt CreatePadInt(int uid);
-        PadInt AcessPadInt(int uid);
+        PadIntValue CreatePadInt(int uid);
+        PadIntValue AcessPadInt(int uid);
     }
 
     public interface RemoteClientInterface

@@ -16,9 +16,14 @@ namespace Containers
             _id = id;
         }
 
-        public int getId()
+        public int Read()
         {
-            return _id;
+
+        }
+
+        public void Write()
+        {
+
         }
     }
 }

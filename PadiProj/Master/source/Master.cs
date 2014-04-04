@@ -14,7 +14,7 @@ namespace Master
     {
         static void Main(string[] args)
         {
-            TcpChannel channel = new TcpChannel(Interfaces.RemoteMasterInterface.MasterPort);
+            TcpChannel channel = new TcpChannel(Interfaces.Constants.MasterPort);
             ChannelServices.RegisterChannel(channel, true);
 
             RemoteMasterInterface obj = new MasterRemote();

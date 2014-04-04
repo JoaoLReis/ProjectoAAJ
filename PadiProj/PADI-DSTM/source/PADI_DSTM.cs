@@ -12,7 +12,7 @@ namespace PADI_DSTM
     {
         private RemoteMasterInterface _master;
         private RemoteServerInterface _server;
-        private List<PadInt> _requests;
+        private Transaction _curTrans;
         private bool _inTransaction;
 
         public bool Init()
@@ -24,7 +24,7 @@ namespace PADI_DSTM
             {
                 _master = (RemoteMasterInterface)Activator.GetObject(
                 typeof(RemoteMasterInterface),
-                "tcp://localhost:" + Interfaces.RemoteMasterInterface.MasterPort + "/master");
+                "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
             }
             catch(Exception e)
             {
@@ -49,7 +49,7 @@ namespace PADI_DSTM
 
         public bool TxBegin()
         {
-
+            _curTrans = new Transaction();
             _inTransaction = true;
            // _curTran = new Transaction();
         }
@@ -72,7 +72,7 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-
+                return false;
             }
         }
 
@@ -84,7 +84,7 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-
+                return false;
             }
         }
 
@@ -96,7 +96,7 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-
+                return false;
             }
         }
 
@@ -108,7 +108,7 @@ namespace PADI_DSTM
             }
             catch (Exception e)
             {
-
+                return false;
             }
         }//1001
         //server
@@ -118,7 +118,7 @@ namespace PADI_DSTM
             //Connect to the available server where he will try to create the padint localy and update its location on to the master.
             try 
             {            
-                 PadIntValue v = _server.CreatePadInt(uid);
+                PadIntValue v = _server.CreatePadInt(uid);
                 return new PadInt(); 
             }
             catch(Exception e)
