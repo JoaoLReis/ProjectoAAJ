@@ -47,7 +47,7 @@ namespace Server.source
             //send a message(to be invoked by itself)
             RemoteClientInterface client = (RemoteClientInterface)Activator.GetObject(
                 typeof(RemoteClientInterface), url);
-            client.receiveResponse(msg);
+           // client.receiveResponse(msg);
         }
 
         private void masterMsg(string msg)
@@ -56,7 +56,7 @@ namespace Server.source
         }
 
         //formerly receive
-        void receive(Message msg)
+        public void receive(Message msg)
         {
         //receive a message(to be invoked by others)
             if (msg.getOwner() == _masterURL)
@@ -76,17 +76,17 @@ namespace Server.source
             _master.getTimeStamp();
         }
 
-        void validate()
+        public void validate()
         { 
         //Start the validating proccess
         }
 
-        void registerReplica(string url)
+        public void registerReplica(string url)
         { 
         //to be invoked by a replica
         }
 
-        bool commit(Transaction t)
+        public bool commit(Transaction t)
         { 
         //commit a transaction and send result to client
             return false;
@@ -103,13 +103,14 @@ namespace Server.source
         //read a padint
         }*/
 
-        void abort()
+        public bool abort()
         { 
         //abort a transaction
+            return false;
         }
 
         //Creates a transaction and generates a timestamp.
-        Transaction begin()
+        public Transaction begin()
         {
             try
             {
@@ -124,7 +125,7 @@ namespace Server.source
         }
 
         //Function that registers a padint on this server.
-        PadIntValue CreatePadInt(int uid)
+        public PadIntValue CreatePadInt(int uid)
         {
             try
             {
@@ -142,7 +143,7 @@ namespace Server.source
         }
 
         //Function that checks localy if the padint exists, if not it must ask master where it is located.
-        PadIntValue AcessPadInt(int uid)
+        public PadIntValue AcessPadInt(int uid)
         {
             try
             {
@@ -166,7 +167,7 @@ namespace Server.source
             }
         }
 
-        void status() 
+        public void status() 
         {
             if(_status == STATE.ALIVE)
                 Console.Out.WriteLine("Server at: " + _ownURL + "STATE.ALIVE");
@@ -176,17 +177,17 @@ namespace Server.source
                 Console.Out.WriteLine("Server at: " + _ownURL + "STATE.FROZEN");
         }
 
-        void fail() 
+        public void fail() 
         {
             _status = STATE.FAILED;
         }
 
-        void freeze() 
+        public void freeze() 
         {
             _status = STATE.FROZEN;
         }
 
-        void recover() 
+        public void recover() 
         {
             _status = STATE.ALIVE;
         }

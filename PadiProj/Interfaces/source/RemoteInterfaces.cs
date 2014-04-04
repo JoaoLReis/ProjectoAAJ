@@ -34,7 +34,7 @@ namespace Interfaces
         void freeze();
 
         void recover();
-        void registerClient(string url);
+
         PadIntValue CreatePadInt(int uid);
         PadIntValue AcessPadInt(int uid);
     }
