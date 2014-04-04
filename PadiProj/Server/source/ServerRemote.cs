@@ -33,7 +33,7 @@ namespace Server.source
         public ServerRemote(int localport)
         {
             _clientURL_transid = new Hashtable();
-            _ownURL = "tcp://localhost:" + localport + "/obj";
+            _ownURL = "tcp://localhost:" + localport + "/Server";
             _padInts = new List<PadIntValue>();
             _status = STATE.ALIVE;
         }
