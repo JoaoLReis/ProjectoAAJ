@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
+using Containers;
 
 [assembly: InternalsVisibleTo("PADI_DSTM")]
 
-namespace Containers
+namespace PADI_DSTM
 {
     [Serializable]
     public class PadInt

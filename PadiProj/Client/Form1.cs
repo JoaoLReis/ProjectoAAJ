@@ -10,7 +10,6 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using PADI_DSTM;
-using PADI_DSTM.Library;
 
 namespace Client
 {

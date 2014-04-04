@@ -79,9 +79,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PADI-DSTM\PADI-DSTM.csproj">
+    <ProjectReference Include="..\PADI-DSTM\PADI_DSTM.csproj">
       <Project>{51239710-115b-4f64-af84-a6cbc6b5cf4d}</Project>
-      <Name>PADI-DSTM</Name>
+      <Name>PADI_DSTM</Name>
     </ProjectReference>
     <ProjectReference Include="..\PADI-DSTM\PADI-DSTM.csproj">
       <Project>{51239710-115b-4f64-af84-a6cbc6b5cf4d}</Project>
