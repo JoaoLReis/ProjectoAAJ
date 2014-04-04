@@ -39,9 +39,10 @@ namespace Client
                     try
                     {
                        pi = PADI_DSTM.Library.AcessPadInt(id);
-                       this.setListPadInt(p);
                     }catch(Exception e){
                     }
+                this.setListPadInt(pi);
+                return pi;
             }
         }
 
