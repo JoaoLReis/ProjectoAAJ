@@ -42,29 +42,6 @@ namespace Server.source
             _status = STATE.ALIVE;
         }
 
-        private void sendToClient(string url, Message msg)
-        {
-            //send a message(to be invoked by itself)
-            RemoteClientInterface client = (RemoteClientInterface)Activator.GetObject(
-                typeof(RemoteClientInterface), url);
-           // client.receiveResponse(msg);
-        }
-
-        private void masterMsg(string msg)
-        {
-
-        }
-
-        //formerly receive
-        public void receive(Message msg)
-        {
-        //receive a message(to be invoked by others)
-            if (msg.getOwner() == _masterURL)
-            {
-                masterMsg(msg.getMessage());
-            }
-        }
-
         private void execute() 
         { 
         //execute active transaction
