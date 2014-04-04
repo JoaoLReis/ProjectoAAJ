@@ -11,6 +11,7 @@ namespace Interfaces
     public static class Constants
     {
         public const int MasterPort = 8080;
+        public enum STATE { FROZEN, ALIVE, FAILED };
     }
 
     public interface RemoteServerInterface

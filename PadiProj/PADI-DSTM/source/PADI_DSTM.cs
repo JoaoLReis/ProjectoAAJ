@@ -104,7 +104,7 @@ namespace PADI_DSTM
         {
             try
             {
-                return _master.Status();
+                return _master.status();
             }
             catch (Exception e)
             {
@@ -116,7 +116,7 @@ namespace PADI_DSTM
         {
             try
             {
-                return _master.Fail(URL);
+                return _master.fail(URL);
             }
             catch (Exception e)
             {
@@ -128,7 +128,7 @@ namespace PADI_DSTM
         {
             try
             {
-                return _master.Freeze(URL);
+                return _master.freeze(URL);
             }
             catch (Exception e)
             {
@@ -140,7 +140,7 @@ namespace PADI_DSTM
         {
             try
             {
-                return _master.Recover(URL);
+                return _master.recover(URL);
             }
             catch (Exception e)
             {
