@@ -77,7 +77,15 @@ namespace PADI_DSTM
                     l.AddRange(v.getRequests());
                 }
                 _curTrans.setRequests(l);
-                return _server.commit(_curTrans);
+                if (_server.commit(_curTrans))
+                {
+                    _acessedPadInts.Clear();
+                    return true;
+                } 
+                else
+                {
+                    return false;
+                }
             }
             catch(Exception e)
             {
