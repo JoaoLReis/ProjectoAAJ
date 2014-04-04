@@ -30,16 +30,22 @@ namespace Server.source
 
         private STATE _status;
 
-        public ServerRemote(int localport)
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
+
+        public ServerRemote()
         {
             _clientURL_transid = new Hashtable();
-            _ownURL = "tcp://localhost:" + localport + "/Server";
+            
             _padInts = new List<PadIntValue>();
             _status = STATE.ALIVE;
         }
 
-        internal void regToMaster()
+        internal void regToMaster(int localport)
         {
+            _ownURL = "tcp://localhost:" + localport + "/Server";
             _master = (RemoteMasterInterface)Activator.GetObject(
             typeof(RemoteMasterInterface),
             "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
@@ -108,22 +114,31 @@ namespace Server.source
         //Function that registers a padint on this server.
         public PadIntValue CreatePadInt(int uid)
         {
-            /*try
-            {*/
-                Console.WriteLine("HERE");
-                //Registers on master.
-                _master.regPadint(uid, _ownURL);
-                
-                PadIntValue v = new PadIntValue(uid, 0); 
-                _padInts.Add(v);
-                return v;
-           // }
-           /* catch(Exception e)
+            try
             {
-                Console.WriteLine("SHIT");
+                _master = (RemoteMasterInterface)Activator.GetObject(
+                typeof(RemoteMasterInterface),
+                "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
+                if( _master.regPadint(uid, _ownURL))
+                {
+                    PadIntValue v = new PadIntValue(uid, 0);
+                    _padInts.Add(v);
+                    Console.WriteLine("CreatedPadint: " + v.getId());
+                    return v;
+                }
+                else
+                {
+                    //TODO
+                    Console.WriteLine("Duplicated Padint");
+                    throw new Exception();
+                }
+           }
+           catch(Exception e)
+           {
+               Console.WriteLine("Error Creating Padint from master.");
                 //throws either a new exception or the same returned from the master.
-                return null;
-            }*/
+               throw new Exception();
+           }
         }
 
         //Function that checks localy if the padint exists, if not it must ask master where it is located.
