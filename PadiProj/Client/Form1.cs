@@ -11,7 +11,6 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
 using Containers;
 using Interfaces;
-using PADI_DSTM.Library;
 
 namespace Client
 {
@@ -34,6 +33,7 @@ namespace Client
 
         private void Connection_Click(object sender, EventArgs e)
         {
+            
             cl.init("tcp://localhost:" + Int32.Parse(ClientPort.Text) + "/MyRemoteObjectName");
 
             TcpChannel client_channel = new TcpChannel(Int32.Parse(ClientPort.Text));

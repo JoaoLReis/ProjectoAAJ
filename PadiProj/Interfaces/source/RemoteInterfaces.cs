@@ -56,9 +56,9 @@ namespace Interfaces
 
         DateTime getTimeStamp();
 
-        bool Status();
-        bool Fail(string URL);
-        bool Freeze(string URL);
-        bool Recover(string URL);
+        bool status();
+        bool fail(string URL);
+        bool freeze(string URL);
+        bool recover(string URL);
     }
 }

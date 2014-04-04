@@ -52,7 +52,7 @@ namespace PADI_DSTM
         //Invokes the creation of a transaction on the available server, the available server will request the master
         //to generate an ID for the transaction.
         public static bool TxBegin()
-        {
+        {             
             try
             {
                 _curTrans = _server.begin();

@@ -83,5 +83,72 @@ namespace Master
             int r = rnd.Next(_AvailableServer.Count);
             return _AvailableServer[r];
         }
+
+        public bool status()
+        {
+            foreach (string URL in _AvailableServer)
+            {
+                try 
+                {
+                    RemoteServerInterface server = (RemoteServerInterface)Activator.GetObject(
+                    typeof(RemoteServerInterface), URL);
+                    server.status();
+                }
+                catch(Exception e)
+                {
+
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool fail(string URL)
+        {
+            try
+            {
+                RemoteServerInterface server = (RemoteServerInterface)Activator.GetObject(
+                typeof(RemoteServerInterface), URL);
+                server.fail(); 
+            }
+            catch (Exception e)
+            {
+
+                return false;
+            }
+            return true;
+        }
+
+        public bool freeze(string URL)
+        {
+            try
+            {
+                RemoteServerInterface server = (RemoteServerInterface)Activator.GetObject(
+                typeof(RemoteServerInterface), URL);
+                server.freeze();
+            }
+            catch (Exception e)
+            {
+
+                return false;
+            }
+            return true;
+        }
+
+        public bool recover(string URL)
+        {
+            try
+            {
+                RemoteServerInterface server = (RemoteServerInterface)Activator.GetObject(
+                typeof(RemoteServerInterface), URL);
+                server.recover();
+            }
+            catch (Exception e)
+            {
+
+                return false;
+            }
+            return true;
+        }
     }
 }
