@@ -35,20 +35,26 @@ namespace Client
             foreach (PadInt p in listPadInt){
                 if (p.getId() == id)
                     return p;
-                else
-                    try
-                    {
-                       pi = PADI_DSTM.Library.AcessPadInt(id);
-                    }catch(Exception e){
-                    }
-                this.setListPadInt(pi);
             }
+            try
+            {
+                pi = PADI_DSTM.Library.AcessPadInt(id);
+                this.setListPadInt(pi);
+                return pi;
+            }catch(Exception e){
+            }
+        
             return pi;
         }
 
         internal void setListPadInt(PadInt p)
         {
             this.listPadInt.Add(p);
+        }
+
+        internal List<PadInt> getPadIntList()
+        {
+            return listPadInt;
         }
     }
 }

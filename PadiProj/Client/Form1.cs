@@ -51,12 +51,12 @@ namespace Client
 
         public void showMessages(String msg)
         {
-            receiveMessages.Text += "\r\n" + msg;
+            receiveMessages.Text += msg + "\r\n";
         }
 
         private void createPadInt_Click(object sender, EventArgs e)
         {
-            if (padIntBox.Text == null)
+            if (padIntBox.Text == "")
                 showMessages("Para criar um PadInt tem de colocar o seu valor");
             else
             {
@@ -67,6 +67,14 @@ namespace Client
         private void acessPadInt_Click(object sender, EventArgs e)
         {
             cl.setListPadInt(PADI_DSTM.Library.AcessPadInt(Int32.Parse(padIntBox.Text)));
+        }
+
+        private void ShowAllPadInts_Click(object sender, EventArgs e)
+        {
+            foreach(PadInt p in cl.getPadIntList())
+            {
+                showMessages("ID: " + p.getId() + "\r\n" + "Value: " + p.getAbsValue());
+            }
         }
     }
 }

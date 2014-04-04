@@ -44,13 +44,14 @@
             this.label6 = new System.Windows.Forms.Label();
             this.ClientPort = new System.Windows.Forms.TextBox();
             this.acessPadInt = new System.Windows.Forms.Button();
+            this.ShowAllPadInts = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Connection
             // 
             this.Connection.Location = new System.Drawing.Point(23, 51);
             this.Connection.Name = "Connection";
-            this.Connection.Size = new System.Drawing.Size(338, 24);
+            this.Connection.Size = new System.Drawing.Size(158, 24);
             this.Connection.TabIndex = 1;
             this.Connection.Text = "Start Connection";
             this.Connection.UseVisualStyleBackColor = true;
@@ -139,17 +140,17 @@
             // 
             // receiveMessages
             // 
-            this.receiveMessages.Location = new System.Drawing.Point(245, 184);
+            this.receiveMessages.Location = new System.Drawing.Point(223, 51);
             this.receiveMessages.Multiline = true;
             this.receiveMessages.Name = "receiveMessages";
             this.receiveMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.receiveMessages.Size = new System.Drawing.Size(115, 148);
+            this.receiveMessages.Size = new System.Drawing.Size(336, 299);
             this.receiveMessages.TabIndex = 13;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(242, 165);
+            this.label5.Location = new System.Drawing.Point(220, 25);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(55, 13);
             this.label5.TabIndex = 14;
@@ -188,11 +189,22 @@
             this.acessPadInt.UseVisualStyleBackColor = true;
             this.acessPadInt.Click += new System.EventHandler(this.acessPadInt_Click);
             // 
+            // ShowAllPadInts
+            // 
+            this.ShowAllPadInts.Location = new System.Drawing.Point(25, 298);
+            this.ShowAllPadInts.Name = "ShowAllPadInts";
+            this.ShowAllPadInts.Size = new System.Drawing.Size(98, 23);
+            this.ShowAllPadInts.TabIndex = 18;
+            this.ShowAllPadInts.Text = "Show PadInts";
+            this.ShowAllPadInts.UseVisualStyleBackColor = true;
+            this.ShowAllPadInts.Click += new System.EventHandler(this.ShowAllPadInts_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(372, 344);
+            this.ClientSize = new System.Drawing.Size(594, 362);
+            this.Controls.Add(this.ShowAllPadInts);
             this.Controls.Add(this.acessPadInt);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.valueBox);
@@ -234,6 +246,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox ClientPort;
         private System.Windows.Forms.Button acessPadInt;
+        private System.Windows.Forms.Button ShowAllPadInts;
     }
 }
 

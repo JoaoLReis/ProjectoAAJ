@@ -48,5 +48,15 @@ namespace PADI_DSTM
         {
             return _requests;
         }
+
+        public PadIntValue getValue()
+        {
+            return _value;
+        }
+
+        public int getAbsValue()
+        {
+            return _value.getValue();
+        }
     }
 }

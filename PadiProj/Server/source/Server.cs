@@ -12,12 +12,16 @@ namespace Server.source
 {
     class Server
     {
-        static int serverport = 1001;
-
-
+        
         static void Main(string[] args)
         {
-            int localport = serverport++;
+            System.Console.WriteLine("Please enter the desired port:");
+            string port = System.Console.ReadLine();
+            int localport;
+            if (!(port == ""))
+                localport = Convert.ToInt32(port);
+            else
+                localport = 1001;
             TcpChannel channel = new TcpChannel(localport);
             ChannelServices.RegisterChannel(channel, true);
 
