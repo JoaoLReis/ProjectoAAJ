@@ -23,6 +23,11 @@ namespace Containers
             _value = v;
         }
 
+        public int getId()
+        {
+            return _value.getId();
+        }
+
         //Returns the value to the client and pushes a new request to the list.
         public int Read()
         {
