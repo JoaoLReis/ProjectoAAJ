@@ -11,6 +11,7 @@ namespace Interfaces
     public static class Constants
     {
         public const int MasterPort = 8080;
+        public enum STATE { FROZEN, ALIVE, FAILED };
     }
 
     public interface RemoteServerInterface
@@ -56,9 +57,9 @@ namespace Interfaces
 
         DateTime getTimeStamp();
 
-        bool Status();
-        bool Fail(string URL);
-        bool Freeze(string URL);
-        bool Recover(string URL);
+        bool status();
+        bool fail(string URL);
+        bool freeze(string URL);
+        bool recover(string URL);
     }
 }

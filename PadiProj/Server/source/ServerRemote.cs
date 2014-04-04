@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Interfaces;
 using Containers;
+using Interfaces.Constants;
 
 namespace Server.source
 {
@@ -26,6 +27,8 @@ namespace Server.source
 
         private RemoteMasterInterface _master;
 
+        private Interfaces.Constants.STATE _status;
+
         public ServerRemote(int localport)
         {
             _clientURL_transid = new Hashtable();
@@ -35,6 +38,7 @@ namespace Server.source
                 typeof(RemoteMasterInterface),
                 "tcp://localhost:" + Interfaces.Constants.MasterPort + "/obj");
             _master.regServer(_ownURL);
+            _status = Interfaces.Constants.STATE.ALIVE;
         }
 
         private void sendToClient(string url, Message msg)
@@ -87,7 +91,7 @@ namespace Server.source
             return false;
         }
 
-        private void write(int padintID)
+        /*private void write(int padintID)
         { 
         //write a padint
         }
@@ -96,7 +100,7 @@ namespace Server.source
         {
             return null;
         //read a padint
-        }
+        }*/
 
         void abort()
         { 
@@ -162,8 +166,8 @@ namespace Server.source
         }
 
         void status() 
-        { 
-        //
+        {
+            Console.Out.WriteLine("Server at: " + _ownURL + " is alive.");
         }
 
         void fail() 

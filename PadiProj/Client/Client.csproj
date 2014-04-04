@@ -83,6 +83,10 @@
       <Project>{51239710-115b-4f64-af84-a6cbc6b5cf4d}</Project>
       <Name>PADI-DSTM</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PADI-DSTM\PADI-DSTM.csproj">
+      <Project>{51239710-115b-4f64-af84-a6cbc6b5cf4d}</Project>
+      <Name>PADI-DSTM</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

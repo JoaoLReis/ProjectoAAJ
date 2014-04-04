@@ -10,14 +10,14 @@ namespace PADI_DSTM
 {
     public class Library
     {
-        private RemoteMasterInterface _master;
-        private RemoteServerInterface _server;
-        private Transaction _curTrans;
-        private bool _inTransaction;
-        private List<PadInt> _acessedPadInts;
+        private static RemoteMasterInterface _master;
+        private static RemoteServerInterface _server;
+        private static Transaction _curTrans;
+        private static bool _inTransaction;
+        private static List<PadInt> _acessedPadInts;
 
         //Inicializes a new List of Padints, and requests acess to the master and obtains an available server from it.
-        public bool Init()
+        public static bool Init()
         {
             _acessedPadInts = new List<PadInt>();
 
@@ -51,8 +51,8 @@ namespace PADI_DSTM
 
         //Invokes the creation of a transaction on the available server, the available server will request the master
         //to generate an ID for the transaction.
-        public bool TxBegin()
-        {
+        public static bool TxBegin()
+        {             
             try
             {
                 _curTrans = _server.begin();
@@ -67,7 +67,7 @@ namespace PADI_DSTM
 
         //Iterates all padints created or acessed within a transaction and concatenates all reads and writes into a single 
         //request list, it then sends this list to the available server.
-        public bool TxCommit()
+        public static bool TxCommit()
         {
             try
             {
@@ -86,7 +86,7 @@ namespace PADI_DSTM
         }
 
         //Aborts a transaction.
-        public bool TxAbort()
+        public static bool TxAbort()
         {
             try
             {
@@ -100,11 +100,11 @@ namespace PADI_DSTM
             }
         }
 
-        public bool Status()
+        public static bool Status()
         {
             try
             {
-                return _master.Status();
+                return _master.status();
             }
             catch (Exception e)
             {
@@ -112,11 +112,11 @@ namespace PADI_DSTM
             }
         }
 
-        public bool Fail(string URL)
+        public static bool Fail(string URL)
         {
             try
             {
-                return _master.Fail(URL);
+                return _master.fail(URL);
             }
             catch (Exception e)
             {
@@ -124,11 +124,11 @@ namespace PADI_DSTM
             }
         }
 
-        public bool Freeze(string URL)
+        public static bool Freeze(string URL)
         {
             try
             {
-                return _master.Freeze(URL);
+                return _master.freeze(URL);
             }
             catch (Exception e)
             {
@@ -136,11 +136,11 @@ namespace PADI_DSTM
             }
         }
 
-        public bool Recover(string URL)
+        public static bool Recover(string URL)
         {
             try
             {
-                return _master.Recover(URL);
+                return _master.recover(URL);
             }
             catch (Exception e)
             {
@@ -148,7 +148,7 @@ namespace PADI_DSTM
             }
         }
 
-        public PadInt CreatePadInt(int uid)
+        public static PadInt CreatePadInt(int uid)
         {
             //Connect to the available server where he will try to create the padint localy and update its location on to the master.
             try 
@@ -165,7 +165,7 @@ namespace PADI_DSTM
             }
         }
 
-        public PadInt AcessPadInt(int uid)
+        public static PadInt AcessPadInt(int uid)
         {
             try
             {
