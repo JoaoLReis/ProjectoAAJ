@@ -163,34 +163,36 @@ namespace PADI_DSTM
         public static PadInt CreatePadInt(int uid)
         {
             //Connect to the available server where he will try to create the padint localy and update its location on to the master.
+            PadIntValue val;
             try 
             {            
-                PadIntValue val = _server.CreatePadInt(uid);
-                PadInt v = new PadInt(val);
-                _acessedPadInts.Add(v);
-                return v; 
+                val = _server.CreatePadInt(uid);
             }
             catch(Exception e)
             {
                 //TODO
                 throw new Exception();
             }
+            PadInt v = new PadInt(val);
+            _acessedPadInts.Add(v);
+            return v; 
         }
 
         public static PadInt AcessPadInt(int uid)
         {
+            PadIntValue val;
             try
             {
-                PadIntValue val = _server.AcessPadInt(uid);
-                PadInt v = new PadInt(val);
-                _acessedPadInts.Add(v);
-                return v; 
+                val = _server.AcessPadInt(uid);
             }
             catch (Exception e)
             {
                 //TODO
                 throw new Exception();
             }
+            PadInt v = new PadInt(val);
+            _acessedPadInts.Add(v);
+            return v; 
         }
     }
 }
