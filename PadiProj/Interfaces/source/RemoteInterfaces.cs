@@ -41,8 +41,6 @@ namespace Interfaces
 
     public interface RemoteClientInterface
     {
-        void receiveResponse(Message msg);
-
         void receiveNotifications(Notification noti);
 
         void sendRequest(Message msg);
