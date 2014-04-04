@@ -8,7 +8,7 @@ using Containers;
 
 namespace Server.source
 {
-     public enum STATE { FROZEN, ALIVE, FAILED };
+    public enum STATE { FROZEN, ALIVE, FAILED };
 
     class ServerRemote : MarshalByRefObject, RemoteServerInterface
     {
@@ -108,19 +108,22 @@ namespace Server.source
         //Function that registers a padint on this server.
         public PadIntValue CreatePadInt(int uid)
         {
-            try
-            {
+            /*try
+            {*/
+                Console.WriteLine("HERE");
                 //Registers on master.
                 _master.regPadint(uid, _ownURL);
+                
                 PadIntValue v = new PadIntValue(uid, 0); 
                 _padInts.Add(v);
                 return v;
-            }
-            catch(Exception e)
+           // }
+           /* catch(Exception e)
             {
+                Console.WriteLine("SHIT");
                 //throws either a new exception or the same returned from the master.
                 return null;
-            }
+            }*/
         }
 
         //Function that checks localy if the padint exists, if not it must ask master where it is located.

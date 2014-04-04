@@ -21,14 +21,14 @@ namespace Server.source
             TcpChannel channel = new TcpChannel(localport);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemoteServerInterface obj = new ServerRemote(localport);
+            ServerRemote obj = new ServerRemote(localport);
             
             RemotingConfiguration.RegisterWellKnownServiceType(
                 typeof(ServerRemote),
                 "Server",
                 WellKnownObjectMode.Singleton);
 
-            ((ServerRemote)obj).regToMaster();
+            obj.regToMaster();
 
             System.Console.WriteLine("<enter> para sair...");
             System.Console.ReadLine();

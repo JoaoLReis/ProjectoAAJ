@@ -22,27 +22,29 @@ namespace PADI_DSTM
             _acessedPadInts = new List<PadInt>();
 
             //Gets master.
-            try
-            {
+            /*try
+            {*/
                 _master = (RemoteMasterInterface)Activator.GetObject(
                 typeof(RemoteMasterInterface),
                 "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
-            }
+            /*}
             catch(Exception e)
             {
                 return false;
-            }
+            }*/
             //Requests a free server.
-            try
-            {
+            /*try
+            {*/
+                string url = _master.requestServer();
                 _server = (RemoteServerInterface)Activator.GetObject(
                 typeof(RemoteServerInterface),
-                _master.requestServer());
-            }
+                url);
+                _server.status();
+            /*}
             catch(Exception e)
             {
                 return false;
-            }
+            }*/
 
             _inTransaction = false;
 
