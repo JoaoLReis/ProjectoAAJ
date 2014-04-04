@@ -27,5 +27,10 @@ namespace Containers
         {
             return _value;
         }
+
+        public void setValue(int v)
+        {
+            _value = v;
+        }
     }
 }

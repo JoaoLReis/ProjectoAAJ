@@ -23,11 +23,11 @@ namespace Interfaces
 
         void status();
 
-        void commit();
+        bool commit(Transaction t);
 
-        void abort();
+        bool abort();
 
-        void begin();
+        Transaction begin();
 
         void fail();
 

@@ -42,7 +42,6 @@
     <Compile Include="source\Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="source\Notification.cs" />
-    <Compile Include="source\PadInt.cs" />
     <Compile Include="source\PadIntValue.cs" />
     <Compile Include="source\Request.cs" />
     <Compile Include="source\Transaction.cs" />

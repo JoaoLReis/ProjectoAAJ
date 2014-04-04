@@ -14,10 +14,12 @@ namespace PADI_DSTM
         private RemoteServerInterface _server;
         private Transaction _curTrans;
         private bool _inTransaction;
+        private List<PadInt> _acessedPadInts;
 
+        //Inicializes a new List of Padints, and requests acess to the master and obtains an available server from it.
         public bool Init()
         {
-            _requests = new List<PadInt>();
+            _acessedPadInts = new List<PadInt>();
 
             //Gets master.
             try
@@ -28,7 +30,7 @@ namespace PADI_DSTM
             }
             catch(Exception e)
             {
-                
+                return false;
             }
             //Requests a free server.
             try
@@ -39,7 +41,7 @@ namespace PADI_DSTM
             }
             catch(Exception e)
             {
-
+                return false;
             }
 
             _inTransaction = false;
@@ -47,21 +49,55 @@ namespace PADI_DSTM
             return true;
         }
 
+        //Invokes the creation of a transaction on the available server, the available server will request the master
+        //to generate an ID for the transaction.
         public bool TxBegin()
         {
-            _curTrans = new Transaction();
-            _inTransaction = true;
-           // _curTran = new Transaction();
+            try
+            {
+                _curTrans = _server.begin();
+                _inTransaction = true;
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
+        //Iterates all padints created or acessed within a transaction and concatenates all reads and writes into a single 
+        //request list, it then sends this list to the available server.
         public bool TxCommit()
         {
-
+            try
+            {
+                List<Request> l = new List<Request>();
+                foreach (PadInt v in _acessedPadInts)
+                {
+                    l.AddRange(v.getRequests());
+                }
+                _curTrans.setRequests(l);
+                return _server.commit(_curTrans);
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
         }
 
+        //Aborts a transaction.
         public bool TxAbort()
         {
-
+            try
+            {
+                _inTransaction = false;
+                return _server.abort();
+            }
+            catch (Exception e)
+            {
+                //Throws an exception to the client saying the transaction aborted.
+                return false;
+            }
         }
 
         public bool Status()
@@ -110,20 +146,22 @@ namespace PADI_DSTM
             {
                 return false;
             }
-        }//1001
-        //server
+        }
 
         public PadInt CreatePadInt(int uid)
         {
             //Connect to the available server where he will try to create the padint localy and update its location on to the master.
             try 
             {            
-                PadIntValue v = _server.CreatePadInt(uid);
-                return new PadInt(); 
+                PadIntValue val = _server.CreatePadInt(uid);
+                PadInt v = new PadInt(val);
+                _acessedPadInts.Add(v);
+                return v; 
             }
             catch(Exception e)
             {
-
+                //Testar se esta a criar um padint que ja existe.
+                return null;
             }
         }
 
@@ -131,11 +169,15 @@ namespace PADI_DSTM
         {
             try
             {
-                return _server.AcessPadInt(uid);
+                PadIntValue val = _server.AcessPadInt(uid);
+                PadInt v = new PadInt(val);
+                _acessedPadInts.Add(v);
+                return v; 
             }
             catch (Exception e)
             {
-
+                //Testar se esta a aceder a um padint que não existe.
+                return null;
             }
         }
     }

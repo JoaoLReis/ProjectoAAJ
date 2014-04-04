@@ -11,30 +11,32 @@ namespace Server.source
     class ServerRemote : MarshalByRefObject, RemoteServerInterface
     {
         //enum CM {CLIENT, MASTER};
-        private Hashtable clientURL_transid;
-        private string clientURLs;
+        private Hashtable _clientURL_transid;
+        private string _clientURLs;
 
-        private string ownURL;
-        private string replicaURL;
-        private string masterURL;
+        private int _server_id;
 
-        private List<PadIntValue> padInts;
+        private string _ownURL;
+        private string _replicaURL;
+        private string _masterURL;
 
-        private int lastCommittedtransID = 0;
+        private List<PadIntValue> _padInts;
 
-        private Transaction activeTransaction;
+        private int _lastCommittedtransID = 0;
 
-        private RemoteMasterInterface master;
+        private Transaction _activeTransaction;
+
+        private RemoteMasterInterface _master;
 
         public ServerRemote(int localport)
         {
-            clientURL_transid = new Hashtable();
-            ownURL = "tcp://localhost:" + localport + "/obj";
-            padInts = new List<PadIntValue>();
-            master = (RemoteMasterInterface)Activator.GetObject(
+            _clientURL_transid = new Hashtable();
+            _ownURL = "tcp://localhost:" + localport + "/obj";
+            _padInts = new List<PadIntValue>();
+            _master = (RemoteMasterInterface)Activator.GetObject(
                 typeof(RemoteMasterInterface),
                 "tcp://localhost:" + Interfaces.Constants.MasterPort + "/obj");
-            master.regServer(ownURL);
+            _server_id = _master.regServer(_ownURL);
         }
 
         private void sendToClient(string url, Message msg)
@@ -54,7 +56,7 @@ namespace Server.source
         void receive(Message msg)
         {
         //receive a message(to be invoked by others)
-            if (msg.getOwner() == masterURL)
+            if (msg.getOwner() == _masterURL)
             {
                 masterMsg(msg.getMessage());
             }
@@ -68,7 +70,7 @@ namespace Server.source
         private void requestTransID()
         { 
         //request to the master a Transaction ID
-            master.getTimeStamp();
+            _master.getTimeStamp();
         }
 
         void validate()
@@ -81,9 +83,10 @@ namespace Server.source
         //to be invoked by a replica
         }
 
-        void commit()
+        bool commit(Transaction t)
         { 
         //commit a transaction and send result to client
+            return false;
         }
 
         private void write(int padintID)
@@ -102,9 +105,62 @@ namespace Server.source
         //abort a transaction
         }
 
-        void begin() 
-        { 
-        //begin a transaction
+        //Creates a transaction and generates a timestamp.
+        Transaction begin()
+        {
+            try
+            {
+                DateTime dt = _master.getTimeStamp();
+                return( new Transaction(_server_id, dt, null));
+            }
+            catch(Exception e)
+            {
+                //test if its needed to catch and rethrow an exception.
+                return null;
+            }
+        }
+
+        //Function that registers a padint on this server.
+        PadIntValue CreatePadInt(int uid)
+        {
+            try
+            {
+                //Registers on master.
+                _master.regPadint(uid, _ownURL);
+                PadIntValue v = new PadIntValue(uid, 0); 
+                _padInts.Add(v);
+                return v;
+            }
+            catch(Exception e)
+            {
+                //throws either a new exception or the same returned from the master.
+                return null;
+            }
+        }
+
+        //Function that checks localy if the padint exists, if not it must ask master where it is located.
+        PadIntValue AcessPadInt(int uid)
+        {
+            try
+            {
+                //Checks to see if the padint is present locally.
+	            foreach (PadIntValue v in _padInts) 
+	            {
+	                if (uid == v.getId());
+                        return v;
+	            }
+
+                string serverURL = _master.getServer(uid);
+                RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+                typeof(RemoteServerInterface), serverURL);
+
+                return serv.AcessPadInt(uid);
+            }
+            catch(Exception e)
+            {
+                //throws either a new exception or the same returned from the master.
+                return null;
+            }
         }
 
         void status() 

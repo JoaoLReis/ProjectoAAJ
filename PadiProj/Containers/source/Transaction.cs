@@ -20,6 +20,12 @@ namespace Containers
         }
 
         //Function used to set a timestamp of a transaction.
+        public void setRequests(List<Request> l)
+        {
+            _requests = l;
+        }
+
+        //Function used to set a timestamp of a transaction.
         public void setTimeStamp(DateTime dt)
         {
             _timestamp = dt;
