@@ -22,6 +22,7 @@ namespace Server.source
                 localport = Convert.ToInt32(port);
             else
                 localport = 1001;
+
             TcpChannel channel = new TcpChannel(localport);
             ChannelServices.RegisterChannel(channel, true);
 

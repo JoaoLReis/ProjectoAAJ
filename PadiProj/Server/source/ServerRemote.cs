@@ -149,7 +149,7 @@ namespace Server.source
                 //Checks to see if the padint is present locally.
 	            foreach (PadIntValue v in _padInts) 
 	            {
-	                if (uid == v.getId());
+	                if (uid == v.getId())
                         return v;
 	            }
 
