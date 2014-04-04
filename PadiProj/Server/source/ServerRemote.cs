@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using Interfaces;
 using Containers;
-using Interfaces.Constants;
 
 namespace Server.source
 {
+     public enum STATE { FROZEN, ALIVE, FAILED };
+
     class ServerRemote : MarshalByRefObject, RemoteServerInterface
     {
         //enum CM {CLIENT, MASTER};
@@ -27,7 +28,7 @@ namespace Server.source
 
         private RemoteMasterInterface _master;
 
-        private Interfaces.Constants.STATE _status;
+        private STATE _status;
 
         public ServerRemote(int localport)
         {
@@ -38,7 +39,7 @@ namespace Server.source
                 typeof(RemoteMasterInterface),
                 "tcp://localhost:" + Interfaces.Constants.MasterPort + "/obj");
             _master.regServer(_ownURL);
-            _status = Interfaces.Constants.STATE.ALIVE;
+            _status = STATE.ALIVE;
         }
 
         private void sendToClient(string url, Message msg)
@@ -167,23 +168,27 @@ namespace Server.source
 
         void status() 
         {
-            Console.Out.WriteLine("Server at: " + _ownURL + " is alive.");
+            if(_status == STATE.ALIVE)
+                Console.Out.WriteLine("Server at: " + _ownURL + "STATE.ALIVE");
+            else if (_status == STATE.FAILED)
+                Console.Out.WriteLine("Server at: " + _ownURL + "STATE.FAILED");
+            else if (_status == STATE.FROZEN)
+                Console.Out.WriteLine("Server at: " + _ownURL + "STATE.FROZEN");
         }
 
         void fail() 
-        { 
-        //
+        {
+            _status = STATE.FAILED;
         }
 
         void freeze() 
-        { 
-        //
+        {
+            _status = STATE.FROZEN;
         }
 
         void recover() 
-        { 
-        //
+        {
+            _status = STATE.ALIVE;
         }
-
     }
 }
