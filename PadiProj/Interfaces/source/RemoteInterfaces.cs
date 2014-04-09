@@ -19,7 +19,9 @@ namespace Interfaces
         void registerReplica(string url);
 
         void partialExecute(Request r);
-        
+
+        void prepare();
+
         //void validate();
 
         void status();

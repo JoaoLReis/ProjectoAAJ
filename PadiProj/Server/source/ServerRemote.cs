@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 using Interfaces;
 using Containers;
 
@@ -27,7 +28,10 @@ namespace Server.source
         private RemoteMasterInterface _master;
         private STATE _status;
 
+        private Stopwatch _timer;
+
         List<String> _participants;
+        List<bool> _returnedPrepares;
         List<PadIntValue> _valuesToBeChanged;
 
         public override object InitializeLifetimeService()
@@ -42,6 +46,8 @@ namespace Server.source
             _valuesToBeChanged = new List<PadIntValue>();
             _padInts = new Dictionary<int, PadIntValue>();
             _status = STATE.ALIVE;
+            _returnedPrepares = new List<bool>();
+            _timer = new Stopwatch();
         }
 
         internal void regToMaster(int localport)
@@ -51,6 +57,18 @@ namespace Server.source
             typeof(RemoteMasterInterface),
             "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
             _master.regServer(_ownURL);
+        }
+
+        private bool verifyPrepares()
+        {
+            if (_participants.Count() == _returnedPrepares.Count())
+                return true;
+            return false;
+        }
+
+        public void prepare()
+        {
+
         }
 
         public void partialExecute(Request r)
@@ -72,6 +90,9 @@ namespace Server.source
         //execute active transaction if it can localy and then remotely 
             foreach (Request r in requests)
             {
+                _master = (RemoteMasterInterface)Activator.GetObject(
+                  typeof(RemoteMasterInterface),
+                "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
                 PadIntValue value;
                 if (_padInts.TryGetValue(r.involved(), out value))
                 {
@@ -107,7 +128,10 @@ namespace Server.source
         }
 
         private void requestTransID()
-        { 
+        {
+            _master = (RemoteMasterInterface)Activator.GetObject(
+            typeof(RemoteMasterInterface),
+            "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
         //request to the master a Transaction ID
             _master.getTimeStamp();
         }
@@ -135,6 +159,28 @@ namespace Server.source
         public bool commit(Transaction t)
         {
             execute(t.getRequests());
+            foreach (String p in _participants)
+            {
+                RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+                                            typeof(RemoteServerInterface), p);
+                serv.prepare();
+            }
+
+            _timer.Start();
+
+            while(true)
+            {
+                if (verifyPrepares())
+                    break;
+                if (_timer.ElapsedMilliseconds > 10000)
+                {
+                    abort(t);
+                    return false;
+                }
+            }
+            _timer.Stop();
+            _timer.Reset();
+            
             if(validate(t))
             {
                 foreach (String p in _participants)
@@ -179,6 +225,10 @@ namespace Server.source
         //Creates a transaction and generates a timestamp.
         public Transaction begin()
         {
+            _master = (RemoteMasterInterface)Activator.GetObject(
+            typeof(RemoteMasterInterface),
+            "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
+
             try
             {
                 DateTime dt = _master.getTimeStamp();
@@ -224,6 +274,10 @@ namespace Server.source
         //Function that checks localy if the padint exists, if not it must ask master where it is located.
         public PadIntValue AcessPadInt(int uid)
         {
+            _master = (RemoteMasterInterface)Activator.GetObject(
+            typeof(RemoteMasterInterface),
+            "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
+
             try
             {
                 //Checks to see if the padint is present locally.

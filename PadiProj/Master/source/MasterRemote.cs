@@ -30,6 +30,13 @@ namespace Master
             _lockTaken = false;
         }
 
+        public override object InitializeLifetimeService()
+        {
+
+            return null;
+
+        }
+
         //Function that tries to register a padint, returns false if the padint already exists.
         public bool regPadint(int id, string server)
         {
