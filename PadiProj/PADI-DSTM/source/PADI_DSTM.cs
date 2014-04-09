@@ -15,6 +15,7 @@ namespace PADI_DSTM
         private static Transaction _curTrans;
         private static bool _inTransaction;
         private static List<PadInt> _acessedPadInts;
+        private static string _curServer;
 
         //Inicializes a new List of Padints, and requests acess to the master and obtains an available server from it.
         public static bool Init()
@@ -35,10 +36,10 @@ namespace PADI_DSTM
             //Requests a free server.
             try
             {
-                string url = _master.requestServer();
+                _curServer = _master.requestServer();
                 _server = (RemoteServerInterface)Activator.GetObject(
                 typeof(RemoteServerInterface),
-                url);
+                _curServer);
                 _server.status();
             }
             catch (TxException e)
@@ -79,6 +80,9 @@ namespace PADI_DSTM
                     l.AddRange(v.getRequests());
                 }
                 _curTrans.setRequests(l);
+                _server = (RemoteServerInterface)Activator.GetObject(
+                typeof(RemoteServerInterface),
+                _curServer);
                 if (_server.commit(_curTrans))
                 {
                     _acessedPadInts.Clear();

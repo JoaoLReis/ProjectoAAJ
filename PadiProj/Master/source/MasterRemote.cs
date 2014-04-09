@@ -10,7 +10,7 @@ namespace Master
 {
     class MasterRemote : MarshalByRefObject, RemoteMasterInterface
     {
-        private Hashtable _serverPadInts;
+        private Dictionary<int, string> _serverPadInts;
         private List<string> _AvailableServer;
 
         private DateTime _lastTimeStamp;
@@ -26,7 +26,7 @@ namespace Master
             _serverID = 0;
             rnd = new Random();
             _AvailableServer = new List<string>();
-            _serverPadInts = new Hashtable();
+            _serverPadInts = new Dictionary<int, string>();
             _lockTaken = false;
         }
 
@@ -52,7 +52,7 @@ namespace Master
         //Gets a server from a padint ID.
         public string getServer(int id)
         {
-            return _serverPadInts[id].ToString();
+            return _serverPadInts.ElementAt(id).Value;
         }
 
         //Registers a server on master.
