@@ -31,7 +31,6 @@ namespace Client
             WellKnownObjectMode.Singleton);
             
             cl.init("tcp://localhost:" + Int32.Parse(ClientPort.Text) + "/Client");
-
         }
 
         private void transactionWrite_Click(object sender, EventArgs e)
@@ -75,6 +74,11 @@ namespace Client
             {
                 showMessages("ID: " + p.getId() + "\r\n" + "Value: " + p.getAbsValue());
             }
+        }
+
+        private void Begin(object sender, EventArgs e)
+        {
+            PADI_DSTM.Library.TxBegin();
         }
     }
 }

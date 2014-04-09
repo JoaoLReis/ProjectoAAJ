@@ -18,7 +18,9 @@ namespace Interfaces
       
         void registerReplica(string url);
 
-        void validate();
+        void execute(Request r);
+        
+        //void validate();
 
         void status();
 
@@ -40,9 +42,9 @@ namespace Interfaces
 
     public interface RemoteClientInterface
     {
-        void receiveNotifications(Notification noti);
+        //void receiveNotifications(Notification noti);
 
-        void sendRequest(Message msg);
+        //void sendRequest(Message msg);
     }
 
     public interface RemoteMasterInterface

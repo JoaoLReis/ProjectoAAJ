@@ -39,12 +39,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="source\Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="source\Notification.cs" />
-    <Compile Include="source\PadIntValue.cs" />
-    <Compile Include="source\Request.cs" />
-    <Compile Include="source\Transaction.cs" />
+    <Compile Include="source\DataTransferObjects\PadIntValue.cs" />
+    <Compile Include="source\DataTransferObjects\Request.cs" />
+    <Compile Include="source\DataTransferObjects\Transaction.cs" />
+    <Compile Include="source\Exceptions\TxException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

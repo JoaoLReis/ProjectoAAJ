@@ -20,14 +20,11 @@ namespace Server.source
         private string _replicaURL;
         private string _masterURL;
 
-        private List<PadIntValue> _padInts;
-
+        private Dictionary<int, PadIntValue> _padInts;
         private int _lastCommittedtransID = 0;
 
         private Transaction _activeTransaction;
-
         private RemoteMasterInterface _master;
-
         private STATE _status;
 
         public override object InitializeLifetimeService()
@@ -38,8 +35,8 @@ namespace Server.source
         public ServerRemote()
         {
             _clientURL_transid = new Hashtable();
-            
-            _padInts = new List<PadIntValue>();
+
+            _padInts = new Dictionary<int, PadIntValue>();
             _status = STATE.ALIVE;
         }
 
@@ -52,9 +49,54 @@ namespace Server.source
             _master.regServer(_ownURL);
         }
 
-        private void execute() 
+        public void execute(Request r)
+        {
+            PadIntValue value;
+            if (_padInts.TryGetValue(r.involved(), out value))
+            {
+                if (r.isWrite())
+                {
+                    value.setValue(r.getVal());
+                }
+            }
+            else throw new TxException("Tried to execute a request over padint " + r.involved() + " that doesnt exist on server " + _ownURL);
+        }
+
+        private void execute(List<Request> requests) 
         { 
-        //execute active transaction
+        //execute active transaction if it can localy and then remotely 
+            foreach (Request r in requests)
+            {
+                PadIntValue value;
+                if (_padInts.TryGetValue(r.involved(), out value))
+                {
+                    if(r.isWrite())
+                    {
+                        value.setValue(r.getVal());
+                        Console.WriteLine("Writing to padint " + value.getId() + " the value " + value.getValue());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Reading padint " + value.getId() + "it has the value " + value.getValue());
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        string serverURL = _master.getServer(r.involved());
+                        RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+                        typeof(RemoteServerInterface), serverURL);
+                        serv.execute(r);
+                        Console.WriteLine("Padint not present on this server. Executing request on other servers...");
+                    }
+                    catch(TxException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        throw e;
+                    }
+                }
+            }
         }
 
         private void requestTransID()
@@ -63,9 +105,11 @@ namespace Server.source
             _master.getTimeStamp();
         }
 
-        public void validate()
+        private bool validate(Transaction t)
         { 
         //Start the validating proccess
+            //TODO
+            return true;
         }
 
         public void registerReplica(string url)
@@ -74,9 +118,9 @@ namespace Server.source
         }
 
         public bool commit(Transaction t)
-        { 
-        //commit a transaction and send result to client
-            return false;
+        {
+            execute(t.getRequests());
+            return validate(t);
         }
 
         /*private void write(int padintID)
@@ -104,10 +148,10 @@ namespace Server.source
                 DateTime dt = _master.getTimeStamp();
                 return( new Transaction(dt, null));
             }
-            catch(Exception e)
+            catch(TxException e)
             {
-                //test if its needed to catch and rethrow an exception.
-                return null;
+                Console.WriteLine(e.Message);
+                throw e;
             }
         }
 
@@ -122,7 +166,7 @@ namespace Server.source
                 if( _master.regPadint(uid, _ownURL))
                 {
                     PadIntValue v = new PadIntValue(uid, 0);
-                    _padInts.Add(v);
+                    _padInts.Add(uid, v);
                     Console.WriteLine("CreatedPadint: " + v.getId());
                     return v;
                 }
@@ -133,11 +177,11 @@ namespace Server.source
                     throw new Exception();
                 }
            }
-           catch(Exception e)
+            catch (TxException e)
            {
                Console.WriteLine("Error Creating Padint from master.");
                 //throws either a new exception or the same returned from the master.
-               throw new Exception();
+               throw new TxException("Error Creating Padint from master.");
            }
         }
 
@@ -147,10 +191,9 @@ namespace Server.source
             try
             {
                 //Checks to see if the padint is present locally.
-	            foreach (PadIntValue v in _padInts) 
+	            if (_padInts.ContainsKey(uid)) 
 	            {
-	                if (uid == v.getId())
-                        return v;
+                    return _padInts[uid];
 	            }
 
                 string serverURL = _master.getServer(uid);
@@ -159,7 +202,7 @@ namespace Server.source
 
                 return serv.AcessPadInt(uid);
             }
-            catch(Exception e)
+            catch(TxException e)
             {
                 //throws either a new exception or the same returned from the master.
                 return null;

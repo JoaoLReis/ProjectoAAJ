@@ -7,7 +7,16 @@ using System.Threading.Tasks;
 namespace Containers
 {
     [Serializable]
-    public class Notification
+    public class TxException : Exception
     {
+        public TxException()
+        {
+
+        }
+
+        public TxException (string msg) : base(msg)
+        {
+
+        }
     }
 }

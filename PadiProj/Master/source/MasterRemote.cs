@@ -66,17 +66,18 @@ namespace Master
         //TESTING REQUIRED!?!
         private DateTime genTimestamp()
         {
-            try
+           /* try
             {
-                System.Threading.Monitor.Enter(CurrentDate, ref _lockTaken);
-                CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+                System.Threading.Monitor.Enter(CurrentDate, ref _lockTaken);*/
+                //CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+                CurrentDate = DateTime.Now; 
                 Console.WriteLine("Generated timestamp: " + CurrentDate.ToString());
                 return CurrentDate;
-            }
+            /*}
             finally
             {
                 System.Threading.Monitor.Exit(CurrentDate);
-            }  
+            }  */
         }
 
         public string requestServer()

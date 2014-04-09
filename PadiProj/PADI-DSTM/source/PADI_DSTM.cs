@@ -22,29 +22,29 @@ namespace PADI_DSTM
             _acessedPadInts = new List<PadInt>();
 
             //Gets master.
-            /*try
-            {*/
+            try
+            {
                 _master = (RemoteMasterInterface)Activator.GetObject(
                 typeof(RemoteMasterInterface),
                 "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
-            /*}
-            catch(Exception e)
+            }
+            catch(TxException e)
             {
                 return false;
-            }*/
+            }
             //Requests a free server.
-            /*try
-            {*/
+            try
+            {
                 string url = _master.requestServer();
                 _server = (RemoteServerInterface)Activator.GetObject(
                 typeof(RemoteServerInterface),
                 url);
                 _server.status();
-            /*}
-            catch(Exception e)
+            }
+            catch (TxException e)
             {
                 return false;
-            }*/
+            }
 
             _inTransaction = false;
 
@@ -61,7 +61,7 @@ namespace PADI_DSTM
                 _inTransaction = true;
                 return true;
             }
-            catch (Exception e)
+            catch (TxException e)
             {
                 return false;
             }
@@ -89,7 +89,7 @@ namespace PADI_DSTM
                     return false;
                 }
             }
-            catch(Exception e)
+            catch (TxException e)
             {
                 return false;
             }
@@ -103,10 +103,9 @@ namespace PADI_DSTM
                 _inTransaction = false;
                 return _server.abort();
             }
-            catch (Exception e)
+            catch (TxException e)
             {
-                //TODO
-                throw new Exception();
+                return false;
             }
         }
 
@@ -116,10 +115,9 @@ namespace PADI_DSTM
             {
                 return _master.status();
             }
-            catch (Exception e)
+            catch (TxException e)
             {
-                //TODO
-                throw new Exception();
+                return false;
             }
         }
 
@@ -129,10 +127,9 @@ namespace PADI_DSTM
             {
                 return _master.fail(URL);
             }
-            catch (Exception e)
+            catch (TxException e)
             {
-                //TODO
-                throw new Exception();
+                return false;
             }
         }
 
@@ -142,10 +139,9 @@ namespace PADI_DSTM
             {
                 return _master.freeze(URL);
             }
-            catch (Exception e)
+            catch (TxException e)
             {
-                //TODO
-                throw new Exception();
+                return false;
             }
         }
 
@@ -155,10 +151,9 @@ namespace PADI_DSTM
             {
                 return _master.recover(URL);
             }
-            catch (Exception e)
+            catch (TxException e)
             {
-                //TODO
-                throw new Exception();
+                return false;
             }
         }
 
@@ -173,9 +168,9 @@ namespace PADI_DSTM
                 _acessedPadInts.Add(v);
                 return v; 
             }
-            catch(Exception e)
+            catch (TxException e)
             {
-                throw new Exception();
+                throw e;
             }
         }
 
@@ -189,9 +184,9 @@ namespace PADI_DSTM
                 _acessedPadInts.Add(v);
                 return v; 
             }
-            catch (Exception e)
+            catch (TxException e)
             {
-                throw new Exception();
+                throw e;
             }
         }
     }

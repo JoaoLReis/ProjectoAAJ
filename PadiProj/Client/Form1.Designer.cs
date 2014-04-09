@@ -45,6 +45,7 @@
             this.ClientPort = new System.Windows.Forms.TextBox();
             this.acessPadInt = new System.Windows.Forms.Button();
             this.ShowAllPadInts = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Connection
@@ -199,11 +200,22 @@
             this.ShowAllPadInts.UseVisualStyleBackColor = true;
             this.ShowAllPadInts.Click += new System.EventHandler(this.ShowAllPadInts_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(106, 173);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 19;
+            this.button1.Text = "Begin";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.Begin);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(594, 362);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.ShowAllPadInts);
             this.Controls.Add(this.acessPadInt);
             this.Controls.Add(this.label6);
@@ -247,6 +259,7 @@
         private System.Windows.Forms.TextBox ClientPort;
         private System.Windows.Forms.Button acessPadInt;
         private System.Windows.Forms.Button ShowAllPadInts;
+        private System.Windows.Forms.Button button1;
     }
 }
 
