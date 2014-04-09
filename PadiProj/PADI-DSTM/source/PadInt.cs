@@ -49,11 +49,7 @@ namespace PADI_DSTM
             return _requests;
         }
 
-        public PadIntValue getValue()
-        {
-            return _value;
-        }
-
+        //METHOD FOR DEBUG PURPOSES ONLY!?!?!?
         public int getAbsValue()
         {
             return _value.getValue();

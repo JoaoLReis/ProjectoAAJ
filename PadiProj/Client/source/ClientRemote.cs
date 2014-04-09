@@ -49,7 +49,19 @@ namespace Client
 
         internal void setListPadInt(PadInt p)
         {
-            this.listPadInt.Add(p);
+            bool ihaveit = false;
+            foreach (PadInt item in this.listPadInt)
+	        {
+                if(item.getId() == p.getId())
+                {
+                    this.listPadInt.Remove(item);
+                    this.listPadInt.Add(p);
+                    ihaveit = true;
+                    break;
+                }
+	        }      
+            if(!ihaveit)
+                this.listPadInt.Add(p); 
         }
 
         internal List<PadInt> getPadIntList()

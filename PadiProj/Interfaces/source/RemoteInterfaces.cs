@@ -18,15 +18,17 @@ namespace Interfaces
       
         void registerReplica(string url);
 
-        void execute(Request r);
+        void partialExecute(Request r);
         
         //void validate();
 
         void status();
 
+        void commitLocalChanges();
+
         bool commit(Transaction t);
 
-        bool abort();
+        bool abort(Transaction t);
 
         Transaction begin();
 

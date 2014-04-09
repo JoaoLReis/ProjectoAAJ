@@ -27,6 +27,9 @@ namespace Server.source
         private RemoteMasterInterface _master;
         private STATE _status;
 
+        List<String> _participants;
+        List<PadIntValue> _valuesToBeChanged;
+
         public override object InitializeLifetimeService()
         {
             return null;
@@ -34,8 +37,9 @@ namespace Server.source
 
         public ServerRemote()
         {
+            _participants = new List<String>();
             _clientURL_transid = new Hashtable();
-
+            _valuesToBeChanged = new List<PadIntValue>();
             _padInts = new Dictionary<int, PadIntValue>();
             _status = STATE.ALIVE;
         }
@@ -49,7 +53,7 @@ namespace Server.source
             _master.regServer(_ownURL);
         }
 
-        public void execute(Request r)
+        public void partialExecute(Request r)
         {
             PadIntValue value;
             if (_padInts.TryGetValue(r.involved(), out value))
@@ -57,6 +61,7 @@ namespace Server.source
                 if (r.isWrite())
                 {
                     value.setValue(r.getVal());
+                    _valuesToBeChanged.Add(value);
                 }
             }
             else throw new TxException("Tried to execute a request over padint " + r.involved() + " that doesnt exist on server " + _ownURL);
@@ -73,6 +78,7 @@ namespace Server.source
                     if(r.isWrite())
                     {
                         value.setValue(r.getVal());
+                        _valuesToBeChanged.Add(value);
                         Console.WriteLine("Writing to padint " + value.getId() + " the value " + value.getValue());
                     }
                     else
@@ -85,9 +91,10 @@ namespace Server.source
                     try
                     {
                         string serverURL = _master.getServer(r.involved());
+                        _participants.Add(serverURL);
                         RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
                         typeof(RemoteServerInterface), serverURL);
-                        serv.execute(r);
+                        serv.partialExecute(r);
                         Console.WriteLine("Padint not present on this server. Executing request on other servers...");
                     }
                     catch(TxException e)
@@ -117,10 +124,39 @@ namespace Server.source
         //to be invoked by a replica
         }
 
+        public void commitLocalChanges()
+        {
+            foreach (PadIntValue item in _valuesToBeChanged)
+	        {
+                _padInts.ElementAt(item.getId()).Value.setValue(item.getValue());
+	        }
+        }
+
         public bool commit(Transaction t)
         {
             execute(t.getRequests());
-            return validate(t);
+            if(validate(t))
+            {
+                foreach (String p in _participants)
+                {
+                    try
+                    {
+                        RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+                        typeof(RemoteServerInterface), p);
+                        serv.commitLocalChanges();
+                    }
+                    catch(TxException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        throw e;
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                return abort(t);
+            }
         }
 
         /*private void write(int padintID)
@@ -134,10 +170,10 @@ namespace Server.source
         //read a padint
         }*/
 
-        public bool abort()
+        public bool abort(Transaction t)
         { 
         //abort a transaction
-            return false;
+            return true;
         }
 
         //Creates a transaction and generates a timestamp.

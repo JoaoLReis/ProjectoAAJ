@@ -101,7 +101,7 @@ namespace PADI_DSTM
             try
             {
                 _inTransaction = false;
-                return _server.abort();
+                return _server.abort(_curTrans);
             }
             catch (TxException e)
             {
