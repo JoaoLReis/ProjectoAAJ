@@ -28,6 +28,7 @@ namespace Master
 
             System.Console.WriteLine("<enter> para sair...");
             System.Console.ReadLine();
+            ChannelServices.UnregisterChannel(channel); 
         }
     }
 }

@@ -46,16 +46,16 @@ namespace PADI_DSTM
 
         internal static bool registerClient(int port)
         {
-            /*try
-            {*/
+            try
+            {
                 TcpChannel client_channel = new TcpChannel(port);
                 ChannelServices.RegisterChannel(client_channel, true);
-            /*}
-           /* catch(Exception e)
+            }
+            catch(Exception e)
             {
                 //TODO
                 return false;
-            }*/
+            }
             return true;
         }
 

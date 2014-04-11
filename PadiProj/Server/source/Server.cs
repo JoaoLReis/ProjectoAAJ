@@ -33,11 +33,19 @@ namespace Server.source
 
             TcpChannel channel = new TcpChannel(localport);
             ChannelServices.RegisterChannel(channel, true);
-
+            
             ServerRemote obj = new ServerRemote();
-            obj.regToMaster(localport);
+            try
+            {
+                RemotingServices.Marshal(obj, "Server", typeof(ServerRemote));
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
 
-            RemotingServices.Marshal(obj, "Server", typeof(ServerRemote));
+            
+            obj.regToMaster(localport);
 
             /*RemotingConfiguration.RegisterWellKnownServiceType(
                 typeof(ServerRemote),
@@ -46,7 +54,7 @@ namespace Server.source
 
             System.Console.WriteLine("<enter> para sair...");
             System.Console.ReadLine();
-
+            ChannelServices.UnregisterChannel(channel); 
         }
     }
 }

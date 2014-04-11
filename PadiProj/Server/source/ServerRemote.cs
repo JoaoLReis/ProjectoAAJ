@@ -258,6 +258,9 @@ namespace Server.source
             _prevStatus = _status;
             _status = STATE.COORDINATOR;
 
+            //Generates a commit ticket.
+            //int ticket = _master.getTicket();
+
             //Writes to the _valuesToBeChanged list the changes to be executed on this server.
             //Determines who are the participants and stores them on _participants.
             prepExec(t.getRequests());

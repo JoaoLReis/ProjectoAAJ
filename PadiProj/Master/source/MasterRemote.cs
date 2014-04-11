@@ -20,6 +20,8 @@ namespace Master
         private int _serverID;
         private DateTime CurrentDate;
 
+        private int _commitTicket;
+
         public MasterRemote()
         {
             _serverID = 0;
@@ -27,6 +29,7 @@ namespace Master
             _AvailableServer = new List<string>();
             _serverPadInts = new Dictionary<int, string>();
             CurrentDate = new DateTime(0);
+            _commitTicket = 1;
         }
 
         //Sets the lifetime of this object to indefinite.
@@ -83,14 +86,22 @@ namespace Master
                 //CurrentDate = Convert.ToDateTime((DateTime.Now.ToString("yyyyMMddHHmmssffff"));
                 CurrentDate = DateTime.Now;
                 Console.WriteLine("Generated timestamp: " + CurrentDate.ToString() + " mili: " + CurrentDate.Millisecond);
-                Thread.Sleep(1);
+                //Locks during a milisecond.
                 return CurrentDate;
             }
             finally
             {
+                Thread.Sleep(1000);
                 System.Threading.Monitor.Exit(obj);
             }
             
+        }
+
+        //Returns a ticket for a commit.
+        //TODO
+        public int getTicket()
+        {
+            return _commitTicket++;
         }
 
         //Sets server at url safe again.

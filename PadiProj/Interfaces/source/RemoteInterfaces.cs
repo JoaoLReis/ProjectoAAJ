@@ -60,6 +60,7 @@ namespace Interfaces
         bool warnServ(string url);
 
         DateTime getTimeStamp();
+        int getTicket();
 
         bool status();
         bool fail(string URL);
