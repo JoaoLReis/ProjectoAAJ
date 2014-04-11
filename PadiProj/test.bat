@@ -9,6 +9,6 @@ start Server.exe 2004
 start Server.exe 2005
 POPD 2
 PUSHD ".\Client\bin\Debug"
-start Client
-start Client
-start Client
+start Client.exe
+start Client.exe
+start Client.exe

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Interfaces;
 using Containers;
+using System.Threading;
 
 namespace Master
 {
@@ -17,8 +18,6 @@ namespace Master
         private Random rnd;
 
         private int _serverID;
-
-        private bool _lockTaken;
         private DateTime CurrentDate;
 
         public MasterRemote()
@@ -27,7 +26,7 @@ namespace Master
             rnd = new Random();
             _AvailableServer = new List<string>();
             _serverPadInts = new Dictionary<int, string>();
-            _lockTaken = false;
+            CurrentDate = new DateTime(0);
         }
 
         //Sets the lifetime of this object to indefinite.
@@ -74,18 +73,24 @@ namespace Master
         //TESTING REQUIRED!?!
         private DateTime genTimestamp()
         {
-           /* try
+            DateTime dt = new DateTime(0);
+
+            System.Object obj = (System.Object)CurrentDate;
+            System.Threading.Monitor.Enter(obj);
+            try
             {
-                System.Threading.Monitor.Enter(CurrentDate, ref _lockTaken);*/
-                //CurrentDate = Convert.ToDateTime(DateTime.Now.ToString("yyyyMMddHHmmssffff"));
-                CurrentDate = DateTime.Now; 
-                Console.WriteLine("Generated timestamp: " + CurrentDate.ToString());
+                //dt = DateTime.Now;
+                //CurrentDate = Convert.ToDateTime((DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+                CurrentDate = DateTime.Now;
+                Console.WriteLine("Generated timestamp: " + CurrentDate.ToString() + " mili: " + CurrentDate.Millisecond);
+                Thread.Sleep(1);
                 return CurrentDate;
-            /*}
+            }
             finally
             {
-                System.Threading.Monitor.Exit(CurrentDate);
-            }  */
+                System.Threading.Monitor.Exit(obj);
+            }
+            
         }
 
         //Sets server at url safe again.
