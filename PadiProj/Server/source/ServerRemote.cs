@@ -87,11 +87,11 @@ namespace Server.source
         {
             if (_status == STATE.FROZEN)
             {
-                throw new TxException("Frozen Server.");
+                throw new FreezeException("Frozen Server.");
             }
             else if (_status == STATE.FAILED)
             {
-                throw new TxException("Failed Server.");
+                throw new FailException("Failed Server.");
             }
             else if (_status == STATE.PARTICIPANT || _status == STATE.COORDINATOR)
             {
@@ -377,7 +377,7 @@ namespace Server.source
         }
 
         //Function that checks localy if the padint exists, if not it must ask master where it is located.
-        public PadIntValue AcessPadInt(int uid)
+        public PadIntValue AccessPadInt(int uid)
         {
             /*_master = (RemoteMasterInterface)Activator.GetObject(
             typeof(RemoteMasterInterface),
@@ -395,7 +395,7 @@ namespace Server.source
                 RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
                 typeof(RemoteServerInterface), serverURL);
 
-                return serv.AcessPadInt(uid);
+                return serv.AccessPadInt(uid);
             }
             catch(TxException e)
             {
@@ -407,12 +407,11 @@ namespace Server.source
         private void printPadints()
         {
             Console.WriteLine(" | *------------* | ");
-            Console.WriteLine("PadIntList");
-            foreach (KeyValuePair<int, PadIntValue> item in _padInts)
+            foreach (int key in _padInts.Keys)
 	        {
-		        Console.WriteLine("Padint: " + item.Value.getId() + " with value: " + item.Value.getValue());
+                PadIntValue item = _padInts[key];
+		        Console.WriteLine("Padint: " + item.getId() + " with value: " + item.getValue());
 	        }
-            Console.WriteLine("PadIntList");
             Console.WriteLine(" | *------------* | ");
         }
 
@@ -445,6 +444,7 @@ namespace Server.source
 
         public void recover() 
         {
+            _master.safeServ(_ownURL);
             _status = _prevStatus;
         }
     }

@@ -16,7 +16,7 @@ namespace Client
 
         internal void init()
         {
-            PADI_DSTM.Library.Init();
+            PadiDstm.Init();
         }
 
         internal String getClientUrl()
@@ -34,7 +34,7 @@ namespace Client
             }
             try
             {
-                pi = PADI_DSTM.Library.AcessPadInt(id);
+                pi = PadiDstm.AccessPadInt(id);
                 this.setListPadInt(pi);
                 return pi;
             }catch(Exception e){

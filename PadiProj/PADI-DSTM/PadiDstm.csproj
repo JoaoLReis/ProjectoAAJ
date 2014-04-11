@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="source\PadInt.cs" />
-    <Compile Include="source\PADI_DSTM.cs" />
+    <Compile Include="source\PadiDstm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

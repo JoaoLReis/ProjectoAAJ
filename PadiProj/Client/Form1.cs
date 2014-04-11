@@ -40,7 +40,7 @@ namespace Client
 
         private void transactionSend_Click(object sender, EventArgs e)
         {
-            PADI_DSTM.Library.TxCommit();
+            PadiDstm.TxCommit();
         }
 
         public void showMessages(String msg)
@@ -54,13 +54,13 @@ namespace Client
                 showMessages("Para criar um PadInt tem de colocar o seu valor");
             else
             {
-                cl.setListPadInt(PADI_DSTM.Library.CreatePadInt(Int32.Parse(padIntBox.Text)));
+                cl.setListPadInt(PadiDstm.CreatePadInt(Int32.Parse(padIntBox.Text)));
             }
         }
 
         private void acessPadInt_Click(object sender, EventArgs e)
         {
-            cl.setListPadInt(PADI_DSTM.Library.AcessPadInt(Int32.Parse(padIntBox.Text)));
+            cl.setListPadInt(PadiDstm.AccessPadInt(Int32.Parse(padIntBox.Text)));
         }
 
         private void ShowAllPadInts_Click(object sender, EventArgs e)
@@ -73,7 +73,7 @@ namespace Client
 
         private void Begin(object sender, EventArgs e)
         {
-            PADI_DSTM.Library.TxBegin();
+            PadiDstm.TxBegin();
         }
 
         private void label2_Click(object sender, EventArgs e)

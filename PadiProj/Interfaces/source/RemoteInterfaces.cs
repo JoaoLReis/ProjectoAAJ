@@ -18,10 +18,7 @@ namespace Interfaces
       
         void registerReplica(string url);
 
-        //void partialExecute(Request r);
-
         void prepare(Transaction t, string _coordinatorURL);
-
         void prepared(string url, bool sucessfull);
 
         //void validate();
@@ -29,9 +26,7 @@ namespace Interfaces
         void status();
 
         void commitLocalChanges();
-
         void commited(string url, bool sucessfull);
-
         bool commit(Transaction t);
 
         bool abort(Transaction t);
@@ -39,13 +34,11 @@ namespace Interfaces
         Transaction begin();
 
         void fail();
-
         void freeze();
-
         void recover();
 
         PadIntValue CreatePadInt(int uid);
-        PadIntValue AcessPadInt(int uid);
+        PadIntValue AccessPadInt(int uid);
     }
 
     public interface RemoteClientInterface
@@ -62,6 +55,9 @@ namespace Interfaces
 
         string getServer(int id);
         string requestServer();
+
+        bool safeServ(string url);
+        bool warnServ(string url);
 
         DateTime getTimeStamp();
 

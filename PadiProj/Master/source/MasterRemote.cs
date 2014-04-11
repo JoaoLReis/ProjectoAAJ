@@ -30,11 +30,10 @@ namespace Master
             _lockTaken = false;
         }
 
+        //Sets the lifetime of this object to indefinite.
         public override object InitializeLifetimeService()
         {
-
             return null;
-
         }
 
         //Function that tries to register a padint, returns false if the padint already exists.
@@ -87,6 +86,28 @@ namespace Master
             {
                 System.Threading.Monitor.Exit(CurrentDate);
             }  */
+        }
+
+        //Sets server at url safe again.
+        public bool safeServ(string url)
+        {
+            if (_AvailableServer.Contains(url))
+            {
+                return false;
+            }
+            _AvailableServer.Add(url);
+            return true;
+        }
+
+        //Removes server at url from the available server.
+        public bool warnServ(string url)
+        {
+            if (_AvailableServer.Contains(url))
+            {
+                _AvailableServer.Remove(url);
+                return true;
+            }
+            else return false;
         }
 
         public string requestServer()

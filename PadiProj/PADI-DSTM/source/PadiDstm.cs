@@ -13,7 +13,7 @@ using Interfaces;
 
 namespace PADI_DSTM
 {
-    public class Library
+    public class PadiDstm
     {
         private static RemoteMasterInterface _master;
         private static RemoteServerInterface _server;
@@ -59,6 +59,23 @@ namespace PADI_DSTM
             return true;
         }
 
+        public static bool requestServer()
+        {
+            //Requests a free server.
+            try
+            {
+                _curServer = _master.requestServer();
+                _server = (RemoteServerInterface)Activator.GetObject(
+                typeof(RemoteServerInterface),
+                _curServer);
+            }
+            catch (TxException e)
+            {
+                return false;
+            }
+            return true;
+        }
+
         //Inicializes a new List of Padints, and requests acess to the master and obtains an available server from it.
         public static bool Init()
         {
@@ -85,18 +102,8 @@ namespace PADI_DSTM
             {
                 return false;
             }
-            //Requests a free server.
-            try
-            {
-                _curServer = _master.requestServer();
-                _server = (RemoteServerInterface)Activator.GetObject(
-                typeof(RemoteServerInterface),
-                _curServer);
-            }
-            catch (TxException e)
-            {
+            if (!requestServer())
                 return false;
-            }
 
             _inTransaction = false;
 
@@ -112,6 +119,10 @@ namespace PADI_DSTM
                 _curTrans = _server.begin();
                 _inTransaction = true;
                 return true;
+            }
+            catch(RemotingException re)
+            {
+                return false;
             }
             catch (TxException e)
             {
@@ -145,8 +156,41 @@ namespace PADI_DSTM
                     return false;
                 }
             }
-            catch (TxException e)
+            //TODO make this generic, accepting a set number of fails.
+            catch (Exception e)
             {
+                if (e is FreezeException || e is FailException || e is RemotingException)
+                {
+                    try
+                    {
+                        //Warns master that this server is unavailable.
+                        if (_master.warnServ(_curServer))
+                        {
+                            //Requests another available server.
+                            if (requestServer())
+                            {
+                                _server = (RemoteServerInterface)Activator.GetObject(
+                                typeof(RemoteServerInterface),
+                                _curServer);
+                                if (_server.commit(_curTrans))
+                                {
+                                    _acessedPadInts.Clear();
+                                    return true;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }
+                            else return false;
+                        }
+                        else return false;
+                    }
+                    catch (Exception ne)
+                    {
+                        return false;
+                    }
+                }
                 return false;
             }
         }
@@ -230,12 +274,12 @@ namespace PADI_DSTM
             }
         }
 
-        public static PadInt AcessPadInt(int uid)
+        public static PadInt AccessPadInt(int uid)
         {
             try
             {
                 PadIntValue val;
-                val = _server.AcessPadInt(uid);
+                val = _server.AccessPadInt(uid);
                 PadInt v = new PadInt(val);
                 _acessedPadInts.Add(v);
                 return v; 

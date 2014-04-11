@@ -9,11 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Master", "Master\Master.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{2AE96E13-F460-4A6C-854E-3F9E7EDDE4E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PADI_DSTM", "PADI-DSTM\PADI_DSTM.csproj", "{51239710-115B-4F64-AF84-A6CBC6B5CF4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PadiDstm", "PADI-DSTM\PadiDstm.csproj", "{51239710-115B-4F64-AF84-A6CBC6B5CF4D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{BB30E591-8614-4001-905A-4CD1C2A9D840}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Containers", "Containers\Containers.csproj", "{6A551929-4FE3-48B6-A14E-523CA08D0C7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,6 +87,16 @@ Global
 		{6A551929-4FE3-48B6-A14E-523CA08D0C7D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{6A551929-4FE3-48B6-A14E-523CA08D0C7D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6A551929-4FE3-48B6-A14E-523CA08D0C7D}.Release|x86.ActiveCfg = Release|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{A585B44A-DDD9-40C4-8F8E-28F5E5E87B28}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
