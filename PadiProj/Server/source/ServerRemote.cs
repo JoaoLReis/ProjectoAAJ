@@ -51,6 +51,9 @@ namespace Server.source
         //Participants handlers.
         Dictionary<String, int> _partHandlers;
 
+        //Coordinator URL keeps being updated.
+        String _coordinatorURL;
+
         //Makes this remote objects lease indefinite.
         public override object InitializeLifetimeService()
         {
@@ -65,6 +68,7 @@ namespace Server.source
             _status = STATE.ALIVE;
             _prevStatus = STATE.ALIVE;
             _partHandlers = new Dictionary<string, int>();
+            _coordinatorURL = "";
         }
 
         //Registers this server on the master server.
@@ -114,11 +118,12 @@ namespace Server.source
         }
 
         //Participant prepare function invoked by a coordinator.
-        public void prepare(Transaction t, string _coordinatorURL)
+        public void prepare(Transaction t, string coordinatorURL)
         {
             checkStatus();
             _prevStatus = _status;
             _status = STATE.PARTICIPANT;
+            _coordinatorURL = coordinatorURL;
             foreach (Request r in t.getRequests())
             {
                 PadIntValue value;
@@ -135,7 +140,7 @@ namespace Server.source
             try
             {
                 RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
-                typeof(RemoteServerInterface), _coordinatorURL);
+                typeof(RemoteServerInterface), coordinatorURL);
                 serv.prepared(_ownURL, true);
             }
             catch(TxException e)
@@ -224,6 +229,13 @@ namespace Server.source
             {
                 _padInts[(item.getId())].setValue(item.getValue());
             }
+            if(_status == STATE.PARTICIPANT)
+            {
+                RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+                typeof(RemoteServerInterface), _coordinatorURL);
+                serv.commited(_ownURL, true);
+                _status = STATE.ALIVE;
+            }
         }
 
         private void resetHandles()
@@ -299,6 +311,7 @@ namespace Server.source
                 }
                 _prevStatus = STATE.ALIVE;
                 _status = STATE.ALIVE;
+                Console.WriteLine("Transaction Successfull.");
                 return true;
             }
             else

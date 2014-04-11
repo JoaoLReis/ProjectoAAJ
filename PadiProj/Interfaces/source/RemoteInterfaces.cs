@@ -30,6 +30,8 @@ namespace Interfaces
 
         void commitLocalChanges();
 
+        void commited(string url, bool sucessfull);
+
         bool commit(Transaction t);
 
         bool abort(Transaction t);
