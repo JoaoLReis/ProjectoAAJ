@@ -28,11 +28,13 @@ namespace Server.source
 
             ServerRemote obj = new ServerRemote();
             obj.regToMaster(localport);
-        
-            RemotingConfiguration.RegisterWellKnownServiceType(
+
+            RemotingServices.Marshal(obj, "Server", typeof(ServerRemote));
+
+            /*RemotingConfiguration.RegisterWellKnownServiceType(
                 typeof(ServerRemote),
                 "Server",
-                WellKnownObjectMode.Singleton);
+                WellKnownObjectMode.Singleton);*/
 
             System.Console.WriteLine("<enter> para sair...");
             System.Console.ReadLine();

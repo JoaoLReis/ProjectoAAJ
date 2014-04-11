@@ -41,7 +41,9 @@ namespace Master
         public bool regPadint(int id, string server)
         {
             if (_serverPadInts.ContainsKey(id))
+            {
                 return false;
+            }
             else 
             {
                 _serverPadInts.Add(id, server);
@@ -52,7 +54,7 @@ namespace Master
         //Gets a server from a padint ID.
         public string getServer(int id)
         {
-            return _serverPadInts.ElementAt(id).Value;
+            return _serverPadInts[id];
         }
 
         //Registers a server on master.

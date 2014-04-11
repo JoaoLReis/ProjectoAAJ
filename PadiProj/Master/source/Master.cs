@@ -17,12 +17,14 @@ namespace Master
             TcpChannel channel = new TcpChannel(Interfaces.Constants.MasterPort);
             ChannelServices.RegisterChannel(channel, true);
 
-            RemoteMasterInterface obj = new MasterRemote();
+            MasterRemote obj = new MasterRemote();
 
-            RemotingConfiguration.RegisterWellKnownServiceType(
+            RemotingServices.Marshal(obj, "master", typeof(MasterRemote));
+
+            /*RemotingConfiguration.RegisterWellKnownServiceType(
                 typeof(MasterRemote),
                 "master",
-                WellKnownObjectMode.Singleton);
+                WellKnownObjectMode.Singleton);*/
 
             System.Console.WriteLine("<enter> para sair...");
             System.Console.ReadLine();

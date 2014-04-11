@@ -6,7 +6,7 @@ using PADI_DSTM;
 
 namespace Client
 {
-    public class ClientRemote : MarshalByRefObject{
+    public class ClientRemote : MarshalByRefObject {
         
         public static Form1 form;
         private String ownUrl;
@@ -14,12 +14,8 @@ namespace Client
 
         delegate void delRSDV(String msg);
 
-        internal void init(String url)
+        internal void init()
         {
-            if (url == null)
-                throw new System.ArgumentException("URL cannot be null", "url");
-            this.ownUrl = url;
-
             PADI_DSTM.Library.Init();
         }
 

@@ -4,36 +4,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Threading;
 using Interfaces;
 using Containers;
 
 namespace Server.source
 {
-    public enum STATE { FROZEN, ALIVE, FAILED };
+    public enum STATE { FROZEN, ALIVE, FAILED, PARTICIPANT, COORDINATOR };
+
+    //Prepare delegate.
+    public delegate void RemoteAsyncPrepare(Transaction t, string _coordinatorURL);
+
+    //Commit local changes delegate.
+    public delegate void RemoteAsyncCommitLocalChanges();
 
     class ServerRemote : MarshalByRefObject, RemoteServerInterface
     {
-        //enum CM {CLIENT, MASTER};
-        private Hashtable _clientURL_transid;
-        private string _clientURLs;
-
+        //URLs for future use.
         private string _ownURL;
         private string _replicaURL;
         private string _masterURL;
 
+        //Padint Database.
         private Dictionary<int, PadIntValue> _padInts;
+
+        //Last commited transaction ID.
         private int _lastCommittedtransID = 0;
 
+        //Active transaction.
         private Transaction _activeTransaction;
+
+        //Master remote reference.
         private RemoteMasterInterface _master;
+
+        //Previous and current state of the server.
         private STATE _status;
+        private STATE _prevStatus;
 
-        private Stopwatch _timer;
-
+        //List of all participants.
         List<String> _participants;
-        List<bool> _returnedPrepares;
+        //Changes to be commited to the local database.
         List<PadIntValue> _valuesToBeChanged;
 
+        //Handlers.
+        AutoResetEvent[] _handles;
+        //Participants handlers.
+        Dictionary<String, int> _partHandlers;
+
+        //Makes this remote objects lease indefinite.
         public override object InitializeLifetimeService()
         {
             return null;
@@ -42,14 +60,14 @@ namespace Server.source
         public ServerRemote()
         {
             _participants = new List<String>();
-            _clientURL_transid = new Hashtable();
             _valuesToBeChanged = new List<PadIntValue>();
             _padInts = new Dictionary<int, PadIntValue>();
             _status = STATE.ALIVE;
-            _returnedPrepares = new List<bool>();
-            _timer = new Stopwatch();
+            _prevStatus = STATE.ALIVE;
+            _partHandlers = new Dictionary<string, int>();
         }
 
+        //Registers this server on the master server.
         internal void regToMaster(int localport)
         {
             _ownURL = "tcp://localhost:" + localport + "/Server";
@@ -59,74 +77,124 @@ namespace Server.source
             _master.regServer(_ownURL);
         }
 
-        private bool verifyPrepares()
+        //Checks the current status of the server and throws exceptions acordingly.
+        //This function is a helper function to be invoked by other methods in this class.
+        private void checkStatus()
         {
-            if (_participants.Count() == _returnedPrepares.Count())
-                return true;
-            return false;
-        }
-
-        public void prepare()
-        {
-
-        }
-
-        public void partialExecute(Request r)
-        {
-            PadIntValue value;
-            if (_padInts.TryGetValue(r.involved(), out value))
+            if (_status == STATE.FROZEN)
             {
-                if (r.isWrite())
-                {
-                    value.setValue(r.getVal());
-                    _valuesToBeChanged.Add(value);
-                }
+                throw new TxException("Frozen Server.");
             }
-            else throw new TxException("Tried to execute a request over padint " + r.involved() + " that doesnt exist on server " + _ownURL);
+            else if (_status == STATE.FAILED)
+            {
+                throw new TxException("Failed Server.");
+            }
+            else if (_status == STATE.PARTICIPANT || _status == STATE.COORDINATOR)
+            {
+                throw new TxException("Server busy with a transaction.");
+            }
         }
 
-        private void execute(List<Request> requests) 
-        { 
-        //execute active transaction if it can localy and then remotely 
-            foreach (Request r in requests)
+        //Coordinator Function invoked by a participant to the coordinator after a prepare is done. 
+        public void prepared(string url, bool sucessfull)
+        {
+            //Currently we compare only size.
+            //And we store only.
+            _handles[(_partHandlers[url])].Set();
+        }
+
+        //Coordinator Function invoked by a participant to the coordinator after a commit is done. 
+        public void commited(string url, bool sucessfull)
+        {
+            //Currently we compare only size.
+            //And we store only.
+            if (!sucessfull)
+                abort(_activeTransaction);
+            _handles[(_partHandlers[url])].Set();
+        }
+
+        //Participant prepare function invoked by a coordinator.
+        public void prepare(Transaction t, string _coordinatorURL)
+        {
+            checkStatus();
+            _prevStatus = _status;
+            _status = STATE.PARTICIPANT;
+            foreach (Request r in t.getRequests())
             {
-                _master = (RemoteMasterInterface)Activator.GetObject(
-                  typeof(RemoteMasterInterface),
-                "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
                 PadIntValue value;
                 if (_padInts.TryGetValue(r.involved(), out value))
                 {
-                    if(r.isWrite())
+                    if (r.isWrite())
                     {
                         value.setValue(r.getVal());
                         _valuesToBeChanged.Add(value);
-                        Console.WriteLine("Writing to padint " + value.getId() + " the value " + value.getValue());
+                        Console.WriteLine("Preparing write to padint " + value.getId() + " the value " + value.getValue());
+                    }
+                }
+            }
+            try
+            {
+                RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+                typeof(RemoteServerInterface), _coordinatorURL);
+                serv.prepared(_ownURL, true);
+            }
+            catch(TxException e)
+            {
+
+            }
+
+        }
+
+        //Prepares the execution of a list of requests.
+        private void prepExec(List<Request> requests)
+        {
+            //Current handler being added.
+            int _handlerID = 0;
+            foreach (Request r in requests)
+            {
+                PadIntValue value;
+                //Does the current server has the padint involved in the request?
+                if (_padInts.TryGetValue(r.involved(), out value))
+                {
+                    //Is it a write?
+                    if (r.isWrite())
+                    {
+                        value.setValue(r.getVal());
+                        _valuesToBeChanged.Add(value);
+                        Console.WriteLine("Preparing write to padint " + value.getId() + " the value " + value.getValue());
                     }
                     else
                     {
-                        Console.WriteLine("Reading padint " + value.getId() + "it has the value " + value.getValue());
+                        Console.WriteLine("Preparing Read of padint " + value.getId() + "it has the value " + value.getValue());
                     }
                 }
                 else
                 {
+                    //We dont have the padint involved in this request does it exist? if yes add the participant that has the required padint.
                     try
                     {
                         string serverURL = _master.getServer(r.involved());
                         _participants.Add(serverURL);
-                        RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
-                        typeof(RemoteServerInterface), serverURL);
-                        serv.partialExecute(r);
-                        Console.WriteLine("Padint not present on this server. Executing request on other servers...");
+                        _partHandlers.Add(serverURL, _handlerID);
+                        _handlerID++;
+                        Console.WriteLine("Padint not present on this server. Executing prepare on other servers...");
                     }
-                    catch(TxException e)
+                    catch (TxException e)
                     {
                         Console.WriteLine(e.Message);
                         throw e;
                     }
                 }
             }
+
+            _handles = new AutoResetEvent[_participants.Count()];
+            for (int i = 0; i < _handlerID; i++)
+            {
+                _handles[i] = new AutoResetEvent(false);
+            }          
         }
 
+        //Requests a unique transaction timestamp to the master.
         private void requestTransID()
         {
             _master = (RemoteMasterInterface)Activator.GetObject(
@@ -136,6 +204,7 @@ namespace Server.source
             _master.getTimeStamp();
         }
 
+        //Validates the current transaction.
         private bool validate(Transaction t)
         { 
         //Start the validating proccess
@@ -148,48 +217,73 @@ namespace Server.source
         //to be invoked by a replica
         }
 
+        //Function invoked to update the database with the changes to be made.
         public void commitLocalChanges()
         {
             foreach (PadIntValue item in _valuesToBeChanged)
-	        {
-                _padInts.ElementAt(item.getId()).Value.setValue(item.getValue());
-	        }
+            {
+                _padInts[(item.getId())].setValue(item.getValue());
+            }
         }
 
+        private void resetHandles()
+        {
+            foreach(AutoResetEvent e in _handles)
+            {
+                e.Reset();
+            }
+        }
+
+        //Function invoked by a client to commit a transaction.
         public bool commit(Transaction t)
         {
-            execute(t.getRequests());
+            //Checks the server status.
+            checkStatus();
+            //Updates current transaction.
+            _activeTransaction = t;
+
+            //Sets coordinator STATE.
+            _prevStatus = _status;
+            _status = STATE.COORDINATOR;
+
+            //Writes to the _valuesToBeChanged list the changes to be executed on this server.
+            //Determines who are the participants and stores them on _participants.
+            prepExec(t.getRequests());
+
+            //Invokes prepare statement on all participants.
             foreach (String p in _participants)
             {
-                RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
-                                            typeof(RemoteServerInterface), p);
-                serv.prepare();
-            }
-
-            _timer.Start();
-
-            while(true)
-            {
-                if (verifyPrepares())
-                    break;
-                if (_timer.ElapsedMilliseconds > 10000)
+                try
                 {
-                    abort(t);
-                    return false;
+                    RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+                    typeof(RemoteServerInterface), p);
+                    RemoteAsyncPrepare prep = new RemoteAsyncPrepare(serv.prepare);
+                    prep.BeginInvoke(t, _ownURL, null, null);
+                }
+                catch(TxException e)
+                {
+                    //TODO
+                        //Console.WriteLine(e.Message);
+                        //throw e;
                 }
             }
-            _timer.Stop();
-            _timer.Reset();
+            if(_participants.Count() > 0)
+                if (!WaitHandle.WaitAll(_handles, 10000))
+                    return false;
+
+            resetHandles();
             
             if(validate(t))
             {
+                commitLocalChanges();
                 foreach (String p in _participants)
                 {
                     try
                     {
                         RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
                         typeof(RemoteServerInterface), p);
-                        serv.commitLocalChanges();
+                        RemoteAsyncCommitLocalChanges prep = new RemoteAsyncCommitLocalChanges(serv.commitLocalChanges);
+                        prep.BeginInvoke(null, null);
                     }
                     catch(TxException e)
                     {
@@ -197,6 +291,14 @@ namespace Server.source
                         throw e;
                     }
                 }
+                if (_participants.Count() > 0)
+                {
+                    if (!WaitHandle.WaitAll(_handles, 10000))
+                        return false;
+                    resetHandles();
+                }
+                _prevStatus = STATE.ALIVE;
+                _status = STATE.ALIVE;
                 return true;
             }
             else
@@ -204,17 +306,6 @@ namespace Server.source
                 return abort(t);
             }
         }
-
-        /*private void write(int padintID)
-        { 
-        //write a padint
-        }
-
-        private PadInt read() 
-        {
-            return null;
-        //read a padint
-        }*/
 
         public bool abort(Transaction t)
         { 
@@ -225,6 +316,7 @@ namespace Server.source
         //Creates a transaction and generates a timestamp.
         public Transaction begin()
         {
+            checkStatus();
             _master = (RemoteMasterInterface)Activator.GetObject(
             typeof(RemoteMasterInterface),
             "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
@@ -246,9 +338,9 @@ namespace Server.source
         {
             try
             {
-                _master = (RemoteMasterInterface)Activator.GetObject(
+               /* _master = (RemoteMasterInterface)Activator.GetObject(
                 typeof(RemoteMasterInterface),
-                "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
+                "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");*/
                 if( _master.regPadint(uid, _ownURL))
                 {
                     PadIntValue v = new PadIntValue(uid, 0);
@@ -274,9 +366,9 @@ namespace Server.source
         //Function that checks localy if the padint exists, if not it must ask master where it is located.
         public PadIntValue AcessPadInt(int uid)
         {
-            _master = (RemoteMasterInterface)Activator.GetObject(
+            /*_master = (RemoteMasterInterface)Activator.GetObject(
             typeof(RemoteMasterInterface),
-            "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");
+            "tcp://localhost:" + Interfaces.Constants.MasterPort + "/master");*/
 
             try
             {
@@ -299,6 +391,18 @@ namespace Server.source
             }
         }
 
+        private void printPadints()
+        {
+            Console.WriteLine(" | *------------* | ");
+            Console.WriteLine("PadIntList");
+            foreach (KeyValuePair<int, PadIntValue> item in _padInts)
+	        {
+		        Console.WriteLine("Padint: " + item.Value.getId() + " with value: " + item.Value.getValue());
+	        }
+            Console.WriteLine("PadIntList");
+            Console.WriteLine(" | *------------* | ");
+        }
+
         public void status() 
         {
             if(_status == STATE.ALIVE)
@@ -307,21 +411,28 @@ namespace Server.source
                 Console.Out.WriteLine("Server at: " + _ownURL + "STATE.FAILED");
             else if (_status == STATE.FROZEN)
                 Console.Out.WriteLine("Server at: " + _ownURL + "STATE.FROZEN");
+            else if (_status == STATE.COORDINATOR)
+                Console.Out.WriteLine("Server at: " + _ownURL + "STATE.COORDINATOR");
+            else if (_status == STATE.PARTICIPANT)
+                Console.Out.WriteLine("Server at: " + _ownURL + "STATE.PARTICIPANT");
+            printPadints();
         }
 
         public void fail() 
         {
+            _prevStatus = STATE.ALIVE;
             _status = STATE.FAILED;
         }
 
         public void freeze() 
         {
+            _prevStatus = _status;
             _status = STATE.FROZEN;
         }
 
         public void recover() 
         {
-            _status = STATE.ALIVE;
+            _status = _prevStatus;
         }
     }
 }

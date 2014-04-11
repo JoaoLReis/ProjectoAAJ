@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Tcp;
+using System.Net.NetworkInformation;
+using System.Net;
 using Containers;
 using Interfaces;
 
@@ -17,11 +22,58 @@ namespace PADI_DSTM
         private static List<PadInt> _acessedPadInts;
         private static string _curServer;
 
+        internal static bool CheckAvailableServerPort(int port)
+        {
+            bool isAvailable = true;
+
+            // Evaluate current system tcp connections. This is the same information provided
+            // by the netstat command line application, just in .Net strongly-typed object
+            // form.  We will look through the list, and if our port we would like to use
+            // in our TcpClient is occupied, we will set isAvailable to false.
+            IPGlobalProperties ipGlobalProperties = IPGlobalProperties.GetIPGlobalProperties();
+            IPEndPoint[] tcpConnInfoArray = ipGlobalProperties.GetActiveTcpListeners();
+
+            foreach (IPEndPoint endpoint in tcpConnInfoArray)
+            {
+                if (endpoint.Port == port)
+                {
+                    isAvailable = false;
+                    break;
+                }
+            }
+            return isAvailable;
+        }
+
+        internal static bool registerClient(int port)
+        {
+            /*try
+            {*/
+                TcpChannel client_channel = new TcpChannel(port);
+                ChannelServices.RegisterChannel(client_channel, true);
+            /*}
+           /* catch(Exception e)
+            {
+                //TODO
+                return false;
+            }*/
+            return true;
+        }
+
         //Inicializes a new List of Padints, and requests acess to the master and obtains an available server from it.
         public static bool Init()
         {
             _acessedPadInts = new List<PadInt>();
 
+            //Finds the first port available from portMin to portMax and register a client there.
+            int portMin = 2000, portMax = 4000;
+            for (int i = portMin; i < portMax; i++)
+            {
+                if (CheckAvailableServerPort(i))
+                {
+                    registerClient(i);
+                    break;
+                }
+            }
             //Gets master.
             try
             {
@@ -40,7 +92,6 @@ namespace PADI_DSTM
                 _server = (RemoteServerInterface)Activator.GetObject(
                 typeof(RemoteServerInterface),
                 _curServer);
-                _server.status();
             }
             catch (TxException e)
             {
@@ -64,6 +115,7 @@ namespace PADI_DSTM
             }
             catch (TxException e)
             {
+                //TODO.
                 return false;
             }
         }

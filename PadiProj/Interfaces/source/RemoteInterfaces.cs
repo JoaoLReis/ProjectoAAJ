@@ -18,9 +18,11 @@ namespace Interfaces
       
         void registerReplica(string url);
 
-        void partialExecute(Request r);
+        //void partialExecute(Request r);
 
-        void prepare();
+        void prepare(Transaction t, string _coordinatorURL);
+
+        void prepared(string url, bool sucessfull);
 
         //void validate();
 

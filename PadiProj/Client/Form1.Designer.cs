@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.Connection = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.padIntBox = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.createPadInt = new System.Windows.Forms.Button();
@@ -42,7 +41,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.valueBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.ClientPort = new System.Windows.Forms.TextBox();
             this.acessPadInt = new System.Windows.Forms.Button();
             this.ShowAllPadInts = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -50,7 +48,7 @@
             // 
             // Connection
             // 
-            this.Connection.Location = new System.Drawing.Point(23, 51);
+            this.Connection.Location = new System.Drawing.Point(24, 25);
             this.Connection.Name = "Connection";
             this.Connection.Size = new System.Drawing.Size(158, 24);
             this.Connection.TabIndex = 1;
@@ -58,26 +56,17 @@
             this.Connection.UseVisualStyleBackColor = true;
             this.Connection.Click += new System.EventHandler(this.Connection_Click);
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(22, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(55, 13);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Client Port";
-            // 
             // padIntBox
             // 
-            this.padIntBox.Location = new System.Drawing.Point(23, 245);
+            this.padIntBox.Location = new System.Drawing.Point(24, 219);
             this.padIntBox.Name = "padIntBox";
-            this.padIntBox.Size = new System.Drawing.Size(100, 20);
+            this.padIntBox.Size = new System.Drawing.Size(77, 20);
             this.padIntBox.TabIndex = 5;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 229);
+            this.label3.Location = new System.Drawing.Point(26, 203);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(50, 13);
             this.label3.TabIndex = 6;
@@ -85,7 +74,7 @@
             // 
             // createPadInt
             // 
-            this.createPadInt.Location = new System.Drawing.Point(141, 242);
+            this.createPadInt.Location = new System.Drawing.Point(111, 216);
             this.createPadInt.Name = "createPadInt";
             this.createPadInt.Size = new System.Drawing.Size(75, 23);
             this.createPadInt.TabIndex = 7;
@@ -95,7 +84,7 @@
             // 
             // idPadIntBox
             // 
-            this.idPadIntBox.Location = new System.Drawing.Point(25, 117);
+            this.idPadIntBox.Location = new System.Drawing.Point(26, 91);
             this.idPadIntBox.Name = "idPadIntBox";
             this.idPadIntBox.Size = new System.Drawing.Size(75, 20);
             this.idPadIntBox.TabIndex = 8;
@@ -103,7 +92,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(25, 98);
+            this.label4.Location = new System.Drawing.Point(26, 72);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(50, 13);
             this.label4.TabIndex = 9;
@@ -111,7 +100,7 @@
             // 
             // transactionWrite
             // 
-            this.transactionWrite.Location = new System.Drawing.Point(25, 144);
+            this.transactionWrite.Location = new System.Drawing.Point(26, 118);
             this.transactionWrite.Name = "transactionWrite";
             this.transactionWrite.Size = new System.Drawing.Size(75, 23);
             this.transactionWrite.TabIndex = 10;
@@ -121,7 +110,7 @@
             // 
             // transactionRead
             // 
-            this.transactionRead.Location = new System.Drawing.Point(106, 144);
+            this.transactionRead.Location = new System.Drawing.Point(107, 118);
             this.transactionRead.Name = "transactionRead";
             this.transactionRead.Size = new System.Drawing.Size(75, 23);
             this.transactionRead.TabIndex = 11;
@@ -131,7 +120,7 @@
             // 
             // transactionSend
             // 
-            this.transactionSend.Location = new System.Drawing.Point(25, 173);
+            this.transactionSend.Location = new System.Drawing.Point(26, 147);
             this.transactionSend.Name = "transactionSend";
             this.transactionSend.Size = new System.Drawing.Size(75, 23);
             this.transactionSend.TabIndex = 12;
@@ -159,7 +148,7 @@
             // 
             // valueBox
             // 
-            this.valueBox.Location = new System.Drawing.Point(107, 117);
+            this.valueBox.Location = new System.Drawing.Point(108, 91);
             this.valueBox.Name = "valueBox";
             this.valueBox.Size = new System.Drawing.Size(74, 20);
             this.valueBox.TabIndex = 15;
@@ -167,22 +156,15 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(107, 98);
+            this.label6.Location = new System.Drawing.Point(108, 72);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(34, 13);
             this.label6.TabIndex = 16;
             this.label6.Text = "Value";
             // 
-            // ClientPort
-            // 
-            this.ClientPort.Location = new System.Drawing.Point(23, 25);
-            this.ClientPort.Name = "ClientPort";
-            this.ClientPort.Size = new System.Drawing.Size(100, 20);
-            this.ClientPort.TabIndex = 4;
-            // 
             // acessPadInt
             // 
-            this.acessPadInt.Location = new System.Drawing.Point(141, 272);
+            this.acessPadInt.Location = new System.Drawing.Point(111, 245);
             this.acessPadInt.Name = "acessPadInt";
             this.acessPadInt.Size = new System.Drawing.Size(75, 23);
             this.acessPadInt.TabIndex = 17;
@@ -192,7 +174,7 @@
             // 
             // ShowAllPadInts
             // 
-            this.ShowAllPadInts.Location = new System.Drawing.Point(25, 298);
+            this.ShowAllPadInts.Location = new System.Drawing.Point(26, 274);
             this.ShowAllPadInts.Name = "ShowAllPadInts";
             this.ShowAllPadInts.Size = new System.Drawing.Size(98, 23);
             this.ShowAllPadInts.TabIndex = 18;
@@ -202,7 +184,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(106, 173);
+            this.button1.Location = new System.Drawing.Point(107, 147);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 19;
@@ -230,8 +212,6 @@
             this.Controls.Add(this.createPadInt);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.padIntBox);
-            this.Controls.Add(this.ClientPort);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.Connection);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -243,7 +223,6 @@
         #endregion
 
         private System.Windows.Forms.Button Connection;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox padIntBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button createPadInt;
@@ -256,7 +235,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox valueBox;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox ClientPort;
         private System.Windows.Forms.Button acessPadInt;
         private System.Windows.Forms.Button ShowAllPadInts;
         private System.Windows.Forms.Button button1;
