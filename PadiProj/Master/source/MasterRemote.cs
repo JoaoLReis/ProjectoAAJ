@@ -91,9 +91,10 @@ namespace Master
             }
             finally
             {
-                Thread.Sleep(1);
+                Thread.Sleep(1000);
                 System.Threading.Monitor.Exit(obj);
             }
+            
         }
 
         //Returns a ticket for a commit.
@@ -119,6 +120,7 @@ namespace Master
         {
             if (_AvailableServer.Contains(url))
             {
+                Console.WriteLine("Server at: "+ url +" is unavailable removing from available.");
                 _AvailableServer.Remove(url);
                 return true;
             }

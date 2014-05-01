@@ -37,15 +37,13 @@ namespace TestApp
 
         static void test2(string[] args)
         {
-            bool res = false;
+            bool res=false;
             PadInt pi_a, pi_b;
             PadiDstm.Init();
 
             // Create 2 PadInts
-            if ((args.Length > 0) && (args[0].Equals("C")))
-            {
-                try
-                {
+            if ((args.Length > 0) && (args[0].Equals("C"))) {
+                try {
                     res = PadiDstm.TxBegin();
                     pi_a = PadiDstm.CreatePadInt(1);
                     pi_b = PadiDstm.CreatePadInt(2000000000);
@@ -59,9 +57,7 @@ namespace TestApp
                     Console.WriteLine("AFTER create commit returned " + res + " . Press enter for next transaction.");
                     Console.WriteLine("####################################################################");
                     Console.ReadLine();
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     Console.WriteLine("Exception: " + e.Message);
                     Console.WriteLine("####################################################################");
                     Console.WriteLine("AFTER create ABORT. Commit returned " + res + " . Press enter for next transaction.");
@@ -71,8 +67,7 @@ namespace TestApp
                 }
             }
 
-            try
-            {
+            try {
                 res = PadiDstm.TxBegin();
                 pi_a = PadiDstm.AccessPadInt(1);
                 pi_b = PadiDstm.AccessPadInt(2000000000);
@@ -80,13 +75,10 @@ namespace TestApp
                 Console.WriteLine("Status after AccessPadint");
                 Console.WriteLine("####################################################################");
                 PadiDstm.Status();
-                if ((args.Length > 0) && ((args[0].Equals("C")) || (args[0].Equals("A"))))
-                {
+                if ((args.Length > 0) && ((args[0].Equals("C")) || (args[0].Equals("A")))) {
                     pi_a.Write(11);
                     pi_b.Write(12);
-                }
-                else
-                {
+                } else {
                     pi_a.Write(21);
                     pi_b.Write(22);
                 }
@@ -106,9 +98,7 @@ namespace TestApp
                 Console.WriteLine("Status after commit. commit = " + res + "Press enter for verification transaction.");
                 Console.WriteLine("####################################################################");
                 Console.ReadLine();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Console.WriteLine("Exception: " + e.Message);
                 Console.WriteLine("####################################################################");
                 Console.WriteLine("AFTER r/w ABORT. Commit returned " + res + " . Press enter for abort and next transaction.");
@@ -117,8 +107,7 @@ namespace TestApp
                 PadiDstm.TxAbort();
             }
 
-            try
-            {
+            try {
                 res = PadiDstm.TxBegin();
                 PadInt pi_c = PadiDstm.AccessPadInt(1);
                 PadInt pi_d = PadiDstm.AccessPadInt(2000000000);
@@ -130,9 +119,7 @@ namespace TestApp
                 PadiDstm.Status();
                 Console.ReadLine();
                 res = PadiDstm.TxCommit();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Console.WriteLine("Exception: " + e.Message);
                 Console.WriteLine("####################################################################");
                 Console.WriteLine("AFTER verification ABORT. Commit returned " + res + " . Press enter for abort and exit.");
@@ -251,10 +238,8 @@ namespace TestApp
         static void Main(string[] args)
         {
             //test1(args);
-            //test2(args);
+            test3(args);
             //test3(args);
-            PadiDstm.Init();
-            PadiDstm.Status();
         }
     }
 }
