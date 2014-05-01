@@ -98,7 +98,6 @@ namespace Master
         }
 
         //Returns a ticket for a commit.
-        //TODO
         public int getTicket()
         {
             return _commitTicket++;
@@ -141,6 +140,20 @@ namespace Master
                 throw new Exception();
             }
 
+        }
+
+        public string requestServerReplica(string urlRequestServer)
+        {
+            int i;
+
+            for (i=0; i < _AvailableServer.Count; i++)
+            {
+                if (i == _AvailableServer.Count - 1)
+                    return _AvailableServer[0];
+                else if (_AvailableServer[i] == urlRequestServer)
+                    return _AvailableServer[i++];
+            }
+            throw new Exception();
         }
 
         public bool status()

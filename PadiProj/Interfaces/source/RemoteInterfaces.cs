@@ -16,7 +16,7 @@ namespace Interfaces
     public interface RemoteServerInterface
     {
       
-        void registerReplica(string url);
+        void registerReplica();
 
         void prepare(Transaction t, string _coordinatorURL);
         void prepared(string url, bool sucessfull);
@@ -55,6 +55,7 @@ namespace Interfaces
 
         string getServer(int id);
         string requestServer();
+        string requestServerReplica(string urlRequestServer);
 
         bool safeServ(string url);
         bool warnServ(string url);

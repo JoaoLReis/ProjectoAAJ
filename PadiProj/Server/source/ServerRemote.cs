@@ -28,8 +28,8 @@ namespace Server.source
         //Padint Database.
         private Dictionary<int, PadIntValue> _padInts;
 
-        //Last commited transaction ID.
-        private int _lastCommittedtransID = 0;
+        //Last commited Transaction.
+        private int _lastTicketTrans = 0;
 
         //Active transaction.
         private Transaction _activeTransaction;
@@ -211,15 +211,24 @@ namespace Server.source
 
         //Validates the current transaction.
         private bool validate(Transaction t)
-        { 
-        //Start the validating proccess
-            //TODO
-            return true;
+        {
+            //Start the validating proccess
+
+
+            return false;
         }
 
-        public void registerReplica(string url)
-        { 
-        //to be invoked by a replica
+        public void registerReplica()
+        {
+            //to be invoked by a replica
+            try
+            {
+                _master.requestServerReplica(this._ownURL);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         //Function invoked to update the database with the changes to be made.
@@ -287,7 +296,9 @@ namespace Server.source
                     return false;
 
             resetHandles();
-            
+
+            _lastTicketTrans = _master.getTicket();
+
             if(validate(t))
             {
                 commitLocalChanges();
