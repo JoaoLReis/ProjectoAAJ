@@ -91,10 +91,9 @@ namespace Master
             }
             finally
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(1);
                 System.Threading.Monitor.Exit(obj);
             }
-            
         }
 
         //Returns a ticket for a commit.
