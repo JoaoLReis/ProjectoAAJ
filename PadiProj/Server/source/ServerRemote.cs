@@ -54,6 +54,8 @@ namespace Server.source
         //Coordinator URL keeps being updated.
         String _coordinatorURL;
 
+        int _handlerID;
+
         //Makes this remote objects lease indefinite.
         public override object InitializeLifetimeService()
         {
@@ -69,6 +71,7 @@ namespace Server.source
             _prevStatus = STATE.ALIVE;
             _partHandlers = new Dictionary<string, int>();
             _coordinatorURL = "";
+            _handlerID = 0;
         }
 
         //Registers this server on the master server.
@@ -154,7 +157,7 @@ namespace Server.source
         private void prepExec(List<Request> requests)
         {
             //Current handler being added.
-            int _handlerID = 0;
+            //int _handlerID = 0;
             foreach (Request r in requests)
             {
                 PadIntValue value;
@@ -292,7 +295,7 @@ namespace Server.source
                 }
             }
             if(_participants.Count() > 0)
-                if (!WaitHandle.WaitAll(_handles, 10000))
+                if (!WaitHandle.WaitAll(_handles, 10))
                     return false;
 
             resetHandles();
@@ -319,12 +322,13 @@ namespace Server.source
                 }
                 if (_participants.Count() > 0)
                 {
-                    if (!WaitHandle.WaitAll(_handles, 10000))
+                    if (!WaitHandle.WaitAll(_handles, 10))
                         return false;
                     resetHandles();
                 }
                 _prevStatus = STATE.ALIVE;
                 _status = STATE.ALIVE;
+           
                 Console.WriteLine("Transaction Successfull.");
                 return true;
             }
@@ -337,7 +341,7 @@ namespace Server.source
         public bool abort(Transaction t)
         { 
         //abort a transaction
-            return true;
+            return false;
         }
 
         //Creates a transaction and generates a timestamp.

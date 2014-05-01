@@ -1,7 +1,7 @@
-PUSHD ".\Master\bin\Debug"
+PUSHD ".\Master\bin\Release"
 start Master.exe
 POPD 2
-PUSHD ".\Server\bin\Debug"
+PUSHD ".\Server\bin\Release"
 start Server.exe 2001
 start Server.exe 2002
 start Server.exe 2003
