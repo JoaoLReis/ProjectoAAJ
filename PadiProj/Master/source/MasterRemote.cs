@@ -52,6 +52,20 @@ namespace Master
             }
         }
 
+        public void broadcast(List<String> participants, int ticket)
+        {
+            foreach (String item in _AvailableServer)
+            {
+                if (!participants.Contains(item))
+                {
+                    RemoteServerInterface server = (RemoteServerInterface)Activator.GetObject(
+                    typeof(RemoteServerInterface), item);
+                    //server.sendTicket(ticket); //fazer chamada assync
+
+                }
+            }
+        }
+
         //Gets a server from a padint ID.
         public string getServer(int id)
         {

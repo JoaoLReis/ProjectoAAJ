@@ -50,6 +50,9 @@ namespace Server.source
 
         //Handlers.
         AutoResetEvent[] _handles;
+        AutoResetEvent[] _unComTransHandles;
+
+
         //Participants handlers.
         Dictionary<String, int> _partHandlers;
 
@@ -101,10 +104,6 @@ namespace Server.source
             {
                 throw new FailException("Failed Server.");
             }
-            else if (_status == STATE.PARTICIPANT || _status == STATE.COORDINATOR)
-            {
-                throw new TxException("Server busy with a transaction.");
-            }
         }
 
         //Coordinator Function invoked by a participant to the coordinator after a prepare is done. 
@@ -130,13 +129,15 @@ namespace Server.source
         {
             checkStatus();
             _prevStatus = _status;
-            _status = STATE.PARTICIPANT;
             _coordinatorURL = coordinatorURL;
             foreach (Request r in t.getRequests())
             {
                 PadIntValue value;
                 if (_padInts.TryGetValue(r.involved(), out value))
                 {
+                    //add transaction t to the list of uncommited transactions
+                    _transactionsUncommited.Add(t);
+
                     if (r.isWrite())
                     {
                         value.setValue(r.getVal());
@@ -157,14 +158,15 @@ namespace Server.source
             }
             catch(TxException e)
             {
-
+                Console.WriteLine("Failed at remote prepare");
             }
 
         }
 
         //Prepares the execution of a list of requests.
-        private void prepExec(List<Request> requests)
+        private void prepExec(Transaction t)
         {
+            List<Request> requests = t.getRequests();
             //Current handler being added.
             int _handlerID = 0;
             foreach (Request r in requests)
@@ -173,6 +175,9 @@ namespace Server.source
                 //Does the current server has the padint involved in the request?
                 if (_padInts.TryGetValue(r.involved(), out value))
                 {
+                    //add transaction t to the list of uncommited transactions
+                    _transactionsUncommited.Add(t);
+
                     //Is it a write?
                     if (r.isWrite())
                     {
@@ -265,16 +270,18 @@ namespace Server.source
 
 
         //Validates the current transaction.
-        private bool validate(Transaction t)
+        public bool validate(Transaction t)
         {
             //Start the validating proccess
             if (t.getTicket() < _lastTicketTrans)
-                return false;
+                return false;// Probably never happens since t ticket will never be lower than last seen
+
             else if (t.getTicket() == _lastTicketTrans+1)
                 return true;
+
             else
             {
-                if (!WaitHandle.WaitAll(_handles, 10))
+                if (!WaitHandle.WaitAll(_unComTransHandles, 10))
                     return false;
                 else
                 {
@@ -287,7 +294,7 @@ namespace Server.source
                     if (validateLocal(t))
                         return true;
                     return false;
-        }
+                }
             }
         }
 
@@ -312,11 +319,13 @@ namespace Server.source
             {
                 _padInts[(item.getId())].setValue(item.getValue());
             }
-                RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
-                typeof(RemoteServerInterface), _coordinatorURL);
-                serv.commited(_ownURL, true);
-                _status = STATE.ALIVE;
-            }
+            RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+            typeof(RemoteServerInterface), _coordinatorURL);
+            serv.commited(_ownURL, true);
+            _status = STATE.ALIVE;
+
+            
+        }
 
         private void resetHandles()
         {
@@ -326,24 +335,26 @@ namespace Server.source
             }
         }
 
+        private void broadcast(List<String> participants, int ticket)
+        {
+            _master.broadcast(participants, ticket);
+        }
+
         //Function invoked by a client to commit a transaction.
         public bool commit(Transaction t)
         {
             //Checks the server status.
             checkStatus();
+
             //Updates current transaction.
             _activeTransaction = t;
 
-            //add transaction t to the list of uncommited transactions
-            _transactionsUncommited.Add(t);
-
             //Sets coordinator STATE.
             _prevStatus = _status;
-            _status = STATE.COORDINATOR;
 
             //Writes to the _valuesToBeChanged list the changes to be executed on this server.
             //Determines who are the participants and stores them on _participants.
-            prepExec(t.getRequests());
+            prepExec(t);
 
             //Invokes prepare statement on all participants.
             foreach (String p in _participants)
@@ -362,9 +373,12 @@ namespace Server.source
                         throw e;
                 }
             }
+
             if(_participants.Count() > 0)
                 if (!WaitHandle.WaitAll(_handles, 20))
                     throw new TxException("Receiving Prepares failed");
+
+            broadCast(_participants, t.getTicket());
 
             resetHandles();
 
@@ -392,12 +406,17 @@ namespace Server.source
                         throw e;
                     }
                 }
+
                 if (_participants.Count() > 0)
                 {
                     if (!WaitHandle.WaitAll(_handles, 20))
                         throw new TxException("Receiving Commit failed");
                     resetHandles();
                 }
+
+                if (_transactionsUncommited.Contains(t))
+                    _transactionsUncommited.Remove(t);
+
                 _prevStatus = STATE.ALIVE;
                 _status = STATE.ALIVE;
                 _participants.Clear();
@@ -405,8 +424,6 @@ namespace Server.source
                 _handles = null;
                 _partHandlers.Clear();
                 Console.WriteLine("Transaction Successfull.");
-                _lastTicketTrans = t.getTicket();
-                //broadCast(_lastTicketTrans);
                 return true;
             }
             else
@@ -537,10 +554,6 @@ namespace Server.source
                 Console.Out.WriteLine("Server at: " + _ownURL + "STATE.FAILED");
             else if (_status == STATE.FROZEN)
                 Console.Out.WriteLine("Server at: " + _ownURL + "STATE.FROZEN");
-            else if (_status == STATE.COORDINATOR)
-                Console.Out.WriteLine("Server at: " + _ownURL + "STATE.COORDINATOR");
-            else if (_status == STATE.PARTICIPANT)
-                Console.Out.WriteLine("Server at: " + _ownURL + "STATE.PARTICIPANT");
             printPadints();
         }
 
