@@ -245,13 +245,10 @@ namespace Server.source
             {
                 _padInts[(item.getId())].setValue(item.getValue());
             }
-            if(_status == STATE.PARTICIPANT)
-            {
-                RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
-                typeof(RemoteServerInterface), _coordinatorURL);
-                serv.commited(_ownURL, true);
-                _status = STATE.ALIVE;
-            }
+            RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+            typeof(RemoteServerInterface), _coordinatorURL);
+            serv.commited(_ownURL, true);
+            _status = STATE.ALIVE;
         }
 
         private void resetHandles()
@@ -305,7 +302,11 @@ namespace Server.source
 
             if(validate(t))
             {
-                commitLocalChanges();
+                //Commiting local changes
+                foreach (PadIntValue item in _valuesToBeChanged)
+                {
+                    _padInts[(item.getId())].setValue(item.getValue());
+                }
                 foreach (String p in _participants)
                 {
                     try
@@ -387,7 +388,7 @@ namespace Server.source
                 {
                     //TODO
                     Console.WriteLine("Duplicated Padint");
-                    throw new Exception();
+                    throw new TxException("Duplicated Padint");
                 }
            }
             catch (TxException e)
