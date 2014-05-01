@@ -61,6 +61,8 @@ namespace Interfaces
         bool safeServ(string url);
         bool warnServ(string url);
 
+        void broadcast(List<String> participants, int ticket);
+
         DateTime getTimeStamp();
         int getTicket();
 
