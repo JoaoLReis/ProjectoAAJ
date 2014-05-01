@@ -14,6 +14,8 @@ namespace Server.source
 
     //Prepare delegate.
     public delegate void RemoteAsyncPrepare(Transaction t, string _coordinatorURL);
+    public delegate bool RemoteAsyncValidate(Transaction t);
+    public delegate bool RemoteAsyncAbort(Transaction t);
 
     //Commit local changes delegate.
     public delegate void RemoteAsyncCommitLocalChanges();
@@ -56,6 +58,8 @@ namespace Server.source
 
         int _handlerID;
 
+        List<Transaction> _transactionsUncommited;
+
         //Makes this remote objects lease indefinite.
         public override object InitializeLifetimeService()
         {
@@ -72,6 +76,7 @@ namespace Server.source
             _partHandlers = new Dictionary<string, int>();
             _coordinatorURL = "";
             _handlerID = 0;
+            _transactionsUncommited = new List<Transaction>();
         }
 
         //Registers this server on the master server.
@@ -212,13 +217,71 @@ namespace Server.source
             _master.getTimeStamp();
         }
 
+        public bool validateLocal(Transaction t)
+        {
+            //Start the validating proccess
+            if (t.getTicket() < _lastTicketTrans)
+                return false;
+            else if (t.getTicket() == _lastTicketTrans + 1)
+                return true;
+            else
+            {
+                if (!WaitHandle.WaitAll(_handles, 10))
+                    return false;
+                else
+                {
+                    foreach (Transaction tran_last in _transactionsUncommited)
+                    {
+                        foreach (Request req_last in tran_last.getRequests())
+                            foreach (Request req_act in t.getRequests())
+                                if (req_last.involved() == req_act.involved() && req_last.isWrite() == req_act.isWrite())
+                                    return false;
+                    }
+                    foreach (String participant in _participants)
+                    {
+                        try
+                        {
+                            RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+                            typeof(RemoteServerInterface), participant);
+                            RemoteAsyncValidate validate = new RemoteAsyncValidate(serv.validate);
+                            validate.BeginInvoke(t, null, null);
+                        }
+                        catch (TxException e)
+                        {
+
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+
+
         //Validates the current transaction.
         private bool validate(Transaction t)
         {
             //Start the validating proccess
-
-
-            return false;
+            if (t.getTicket() < _lastTicketTrans)
+                return false;
+            else if (t.getTicket() == _lastTicketTrans+1)
+                return true;
+            else
+            {
+                if (!WaitHandle.WaitAll(_handles, 10))
+                    return false;
+                else
+                {
+                    foreach (Transaction tran_last in _transactionsUncommited) {
+                        foreach (Request req_last in tran_last.getRequests())
+                            foreach (Request req_act in t.getRequests())
+                                if (req_last.involved() == req_act.involved() && req_last.isWrite() == req_act.isWrite())
+                                    return false;
+                    }
+                    if (validateLocal(t))
+                        return true;
+                    return false;
+                }
+            }
         }
 
         public void registerReplica()
@@ -231,6 +294,7 @@ namespace Server.source
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                registerReplica();
             }
         }
 
@@ -266,6 +330,9 @@ namespace Server.source
             //Updates current transaction.
             _activeTransaction = t;
 
+            //add transaction t to the list of uncommited transactions
+            _transactionsUncommited.Add(t);
+
             //Sets coordinator STATE.
             _prevStatus = _status;
             _status = STATE.COORDINATOR;
@@ -289,9 +356,6 @@ namespace Server.source
                 }
                 catch(TxException e)
                 {
-                    //TODO
-                        //Console.WriteLine(e.Message);
-                        //throw e;
                 }
             }
             if(_participants.Count() > 0)
@@ -300,7 +364,7 @@ namespace Server.source
 
             resetHandles();
 
-            _lastTicketTrans = _master.getTicket();
+            t.setTicket(_master.getTicket());
 
             if(validate(t))
             {
@@ -330,6 +394,8 @@ namespace Server.source
                 _status = STATE.ALIVE;
            
                 Console.WriteLine("Transaction Successfull.");
+                _lastTicketTrans = t.getTicket();
+                //broadCast(_lastTicketTrans);
                 return true;
             }
             else
@@ -340,7 +406,26 @@ namespace Server.source
 
         public bool abort(Transaction t)
         { 
-        //abort a transaction
+            //abort a transaction
+            
+            _valuesToBeChanged.Clear();     //Discutir esta parte, porque está-se a eliminar tudo mesmo o que pertence a outras transacções
+            t.getRequests().Clear();
+
+            foreach (String p in _participants)
+            {
+                try
+                {
+                    RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
+                    typeof(RemoteServerInterface), p);
+                    RemoteAsyncAbort abort = new RemoteAsyncAbort(serv.abort);
+                    abort.BeginInvoke(t, null, null);
+                }
+                catch (TxException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
             return false;
         }
 

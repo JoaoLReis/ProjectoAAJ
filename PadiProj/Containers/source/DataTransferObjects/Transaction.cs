@@ -11,6 +11,7 @@ namespace Containers
     {
         private DateTime _timestamp;
         private List<Request> _requests;
+        private int _ticket;
 
         public Transaction(DateTime timestamp, List<Request> requests)
         {
@@ -40,6 +41,16 @@ namespace Containers
         public List<Request> getRequests()
         {
             return _requests;
+        }
+
+        public int getTicket()
+        {
+            return _ticket;
+        }
+
+        public void setTicket(int ticket)
+        {
+            _ticket = ticket;
         }
 
     }

@@ -21,7 +21,8 @@ namespace Interfaces
         void prepare(Transaction t, string _coordinatorURL);
         void prepared(string url, bool sucessfull);
 
-        //void validate();
+        bool validate(Transaction t);
+        bool validateLocal(Transaction t);
 
         void status();
 
