@@ -265,7 +265,7 @@ namespace Server.source
 
 
         //Validates the current transaction.
-        private bool validate(Transaction t)
+        public bool validate(Transaction t)
         {
             //Start the validating proccess
             if (t.getTicket() < _lastTicketTrans)
@@ -287,7 +287,7 @@ namespace Server.source
                     if (validateLocal(t))
                         return true;
                     return false;
-        }
+                }
             }
         }
 
