@@ -91,7 +91,7 @@ namespace Master
             }
             finally
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(10);
                 System.Threading.Monitor.Exit(obj);
             }
             

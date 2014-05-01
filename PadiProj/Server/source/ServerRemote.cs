@@ -135,6 +135,10 @@ namespace Server.source
                         _valuesToBeChanged.Add(value);
                         Console.WriteLine("Preparing write to padint " + value.getId() + " the value " + value.getValue());
                     }
+                    else
+                    {
+                        Console.WriteLine("Preparing Read of padint " + value.getId() + "it has the value " + value.getValue());
+                    }
                 }
             }
             try
@@ -218,7 +222,7 @@ namespace Server.source
             //Start the validating proccess
 
 
-            return false;
+            return true;
         }
 
         public void registerReplica()
@@ -288,12 +292,12 @@ namespace Server.source
                 {
                     //TODO
                         //Console.WriteLine(e.Message);
-                        //throw e;
+                        throw e;
                 }
             }
             if(_participants.Count() > 0)
-                if (!WaitHandle.WaitAll(_handles, 60))
-                    return false;
+                if (!WaitHandle.WaitAll(_handles, 20))
+                    throw new TxException("Receiving Prepares failed");
 
             resetHandles();
 
@@ -319,12 +323,16 @@ namespace Server.source
                 }
                 if (_participants.Count() > 0)
                 {
-                    if (!WaitHandle.WaitAll(_handles, 60))
-                        return false;
+                    if (!WaitHandle.WaitAll(_handles, 20))
+                        throw new TxException("Receiving Commit failed");
                     resetHandles();
                 }
                 _prevStatus = STATE.ALIVE;
                 _status = STATE.ALIVE;
+                _participants.Clear();
+                _valuesToBeChanged.Clear();
+                _handles = null;
+                _partHandlers.Clear();
                 Console.WriteLine("Transaction Successfull.");
                 return true;
             }
