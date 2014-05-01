@@ -143,7 +143,11 @@ namespace Server.source
                         _valuesToBeChanged.Add(value);
                         Console.WriteLine("Preparing write to padint " + value.getId() + " the value " + value.getValue());
                     }
+                    else
+                    {
+                        Console.WriteLine("Preparing Read of padint " + value.getId() + "it has the value " + value.getValue());
                 }
+            }
             }
             try
             {
@@ -162,7 +166,7 @@ namespace Server.source
         private void prepExec(List<Request> requests)
         {
             //Current handler being added.
-            //int _handlerID = 0;
+            int _handlerID = 0;
             foreach (Request r in requests)
             {
                 PadIntValue value;
@@ -187,10 +191,13 @@ namespace Server.source
                     try
                     {
                         string serverURL = _master.getServer(r.involved());
+                        if(!_participants.Contains(serverURL))
+                        {
                         _participants.Add(serverURL);
                         _partHandlers.Add(serverURL, _handlerID);
                         _handlerID++;
                         Console.WriteLine("Padint not present on this server. Executing prepare on other servers...");
+                    }
                     }
                     catch (TxException e)
                     {
@@ -280,7 +287,7 @@ namespace Server.source
                     if (validateLocal(t))
                         return true;
                     return false;
-                }
+        }
             }
         }
 
@@ -305,14 +312,11 @@ namespace Server.source
             {
                 _padInts[(item.getId())].setValue(item.getValue());
             }
-            if(_status == STATE.PARTICIPANT)
-            {
                 RemoteServerInterface serv = (RemoteServerInterface)Activator.GetObject(
                 typeof(RemoteServerInterface), _coordinatorURL);
                 serv.commited(_ownURL, true);
                 _status = STATE.ALIVE;
             }
-        }
 
         private void resetHandles()
         {
@@ -337,9 +341,6 @@ namespace Server.source
             _prevStatus = _status;
             _status = STATE.COORDINATOR;
 
-            //Generates a commit ticket.
-            //int ticket = _master.getTicket();
-
             //Writes to the _valuesToBeChanged list the changes to be executed on this server.
             //Determines who are the participants and stores them on _participants.
             prepExec(t.getRequests());
@@ -356,11 +357,14 @@ namespace Server.source
                 }
                 catch(TxException e)
                 {
+                    //TODO
+                        //Console.WriteLine(e.Message);
+                        throw e;
                 }
             }
             if(_participants.Count() > 0)
-                if (!WaitHandle.WaitAll(_handles, 10))
-                    return false;
+                if (!WaitHandle.WaitAll(_handles, 20))
+                    throw new TxException("Receiving Prepares failed");
 
             resetHandles();
 
@@ -368,7 +372,11 @@ namespace Server.source
 
             if(validate(t))
             {
-                commitLocalChanges();
+                //Commiting local changes
+                foreach (PadIntValue item in _valuesToBeChanged)
+                {
+                    _padInts[(item.getId())].setValue(item.getValue());
+                }
                 foreach (String p in _participants)
                 {
                     try
@@ -386,13 +394,16 @@ namespace Server.source
                 }
                 if (_participants.Count() > 0)
                 {
-                    if (!WaitHandle.WaitAll(_handles, 10))
-                        return false;
+                    if (!WaitHandle.WaitAll(_handles, 20))
+                        throw new TxException("Receiving Commit failed");
                     resetHandles();
                 }
                 _prevStatus = STATE.ALIVE;
                 _status = STATE.ALIVE;
-           
+                _participants.Clear();
+                _valuesToBeChanged.Clear();
+                _handles = null;
+                _partHandlers.Clear();
                 Console.WriteLine("Transaction Successfull.");
                 _lastTicketTrans = t.getTicket();
                 //broadCast(_lastTicketTrans);
@@ -406,7 +417,7 @@ namespace Server.source
 
         public bool abort(Transaction t)
         { 
-            //abort a transaction
+        //abort a transaction
             
             _valuesToBeChanged.Clear();     //Discutir esta parte, porque está-se a eliminar tudo mesmo o que pertence a outras transacções
             t.getRequests().Clear();
@@ -468,7 +479,7 @@ namespace Server.source
                 {
                     //TODO
                     Console.WriteLine("Duplicated Padint");
-                    throw new Exception();
+                    throw new TxException("Duplicated Padint");
                 }
            }
             catch (TxException e)

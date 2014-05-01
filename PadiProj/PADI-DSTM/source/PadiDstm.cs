@@ -159,7 +159,7 @@ namespace PADI_DSTM
             //TODO make this generic, accepting a set number of fails.
             catch (Exception e)
             {
-                if (e is FreezeException || e is FailException || e is RemotingException)
+                if (e is FreezeException || e is FailException || e is RemotingException || e is TxException)
                 {
                     try
                     {

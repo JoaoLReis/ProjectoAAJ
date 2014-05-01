@@ -114,6 +114,7 @@ namespace Test1
                 Console.ReadLine();
                 PadiDstm.TxAbort();
             }
+            PadiDstm.Status();
         }
     }
 }
