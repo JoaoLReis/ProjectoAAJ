@@ -131,6 +131,19 @@ namespace PADI_DSTM
             }
         }
 
+        private static bool checkCommit()
+        {
+            if (_server.commit(_curTrans))
+            {
+                _acessedPadInts.Clear();
+                return true;
+            }
+            else
+            {
+                //WARNING!!! TO CHANGE IN ORDER TO CALL COMMIT AGAIN!!!!
+                return checkCommit();
+            }
+        }
         //Iterates all padints created or acessed within a transaction and concatenates all reads and writes into a single 
         //request list, it then sends this list to the available server.
         public static bool TxCommit()
@@ -146,15 +159,10 @@ namespace PADI_DSTM
                 _server = (RemoteServerInterface)Activator.GetObject(
                 typeof(RemoteServerInterface),
                 _curServer);
-                if (_server.commit(_curTrans))
-                {
-                    _acessedPadInts.Clear();
-                    return true;
-                } 
-                else
-                {
-                    return false;
-                }
+
+                _curTrans.setTicket(_master.getTicket());
+
+                return checkCommit();
             }
             //TODO make this generic, accepting a set number of fails.
             catch (Exception e)
@@ -164,7 +172,7 @@ namespace PADI_DSTM
                     try
                     {
                         //Warns master that this server is unavailable.
-                        if (_master.warnServ(_curServer))
+                        if (_master.warnServ(_curServer, e))
                         {
                             //Requests another available server.
                             if (requestServer())
@@ -172,15 +180,7 @@ namespace PADI_DSTM
                                 _server = (RemoteServerInterface)Activator.GetObject(
                                 typeof(RemoteServerInterface),
                                 _curServer);
-                                if (_server.commit(_curTrans))
-                                {
-                                    _acessedPadInts.Clear();
-                                    return true;
-                                }
-                                else
-                                {
-                                    return false;
-                                }
+                                checkCommit();
                             }
                             else return false;
                         }
@@ -188,7 +188,8 @@ namespace PADI_DSTM
                     }
                     catch (Exception ne)
                     {
-                        return false;
+                        Console.WriteLine("Failed on some exception on TxCommit");
+                        throw ne;
                     }
                 }
                 return false;
@@ -201,7 +202,7 @@ namespace PADI_DSTM
             try
             {
                 _inTransaction = false;
-                return _server.abort(_curTrans);
+                return _server.abort(_curTrans.getTicket());
             }
             catch (TxException e)
             {

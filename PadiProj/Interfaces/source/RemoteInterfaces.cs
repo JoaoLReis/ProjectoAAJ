@@ -18,19 +18,22 @@ namespace Interfaces
       
         void registerReplica();
 
-        void prepare(Transaction t, string _coordinatorURL);
-        void prepared(string url, bool sucessfull);
+        void getTicket(int ticket);
 
-        bool validate(Transaction t);
-        bool validateLocal(Transaction t);
+        void prepare(Transaction t, string _coordinatorURL);
+        void prepared(int ticket, string url, bool sucessfull);
+
+        bool validate(int ticket);
+        void validateLocal(Transaction t);
+        void validated(int ticket, string url, bool successful);
 
         void status();
 
-        void commitLocalChanges();
-        void commited(string url, bool sucessfull);
+        void commitLocalChanges(int ticket);
+        void commited(int ticket, string url, bool sucessfull);
         bool commit(Transaction t);
 
-        bool abort(Transaction t);
+        bool abort(int ticket);
 
         Transaction begin();
 
@@ -59,7 +62,7 @@ namespace Interfaces
         string requestServerReplica(string urlRequestServer);
 
         bool safeServ(string url);
-        bool warnServ(string url);
+        bool warnServ(string url, Exception e);
 
         void broadcast(List<String> participants, int ticket);
 

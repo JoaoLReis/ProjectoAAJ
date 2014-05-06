@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Containers
 {
     [Serializable]
-    public class Transaction
+    public class Transaction : IEquatable<Transaction>
     {
         private DateTime _timestamp;
         private List<Request> _requests;
@@ -51,6 +51,25 @@ namespace Containers
         public void setTicket(int ticket)
         {
             _ticket = ticket;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            Transaction objAsPart = obj as Transaction;
+            if (objAsPart == null) return false;
+            else return Equals(objAsPart);
+        }
+
+        public override int GetHashCode()
+        {
+            return _ticket;
+        }
+
+        public bool Equals(Transaction other)
+        {
+            if (other == null) return false;
+            return ((_ticket.Equals(other.getTicket())) && (_timestamp.Equals(other.getTimeStamp())));
         }
 
     }

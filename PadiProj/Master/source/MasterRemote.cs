@@ -9,6 +9,9 @@ using System.Threading;
 
 namespace Master
 {
+    //Prepare delegate.
+    public delegate void RemoteAsyncBroadCast(int ticket);
+
     class MasterRemote : MarshalByRefObject, RemoteMasterInterface
     {
         private Dictionary<int, string> _serverPadInts;
@@ -60,7 +63,8 @@ namespace Master
                 {
                     RemoteServerInterface server = (RemoteServerInterface)Activator.GetObject(
                     typeof(RemoteServerInterface), item);
-                    //server.sendTicket(ticket); //fazer chamada assync
+                    RemoteAsyncBroadCast broadcast = new RemoteAsyncBroadCast(server.getTicket);
+                    broadcast.BeginInvoke(ticket, null, null);
 
                 }
             }
@@ -129,8 +133,9 @@ namespace Master
         }
 
         //Removes server at url from the available server.
-        public bool warnServ(string url)
+        public bool warnServ(string url, Exception e)
         {
+            Console.WriteLine(e.Message);
             if (_AvailableServer.Contains(url))
             {
                 Console.WriteLine("Server at: "+ url +" is unavailable removing from available.");

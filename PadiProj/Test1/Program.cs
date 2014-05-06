@@ -104,6 +104,10 @@ namespace Test1
                 PadiDstm.Status();
                 Console.ReadLine();
                 res = PadiDstm.TxCommit();
+                Console.WriteLine("Status after commit----" + res + ". Press enter for commit and exit.");
+                Console.WriteLine("####################################################################");
+                PadiDstm.Status();
+                Console.ReadLine();
             }
             catch (Exception e)
             {
