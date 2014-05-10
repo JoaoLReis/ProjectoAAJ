@@ -17,6 +17,8 @@ namespace Interfaces
     {
       
         void registerReplica();
+        bool replicatedInfo(Dictionary<int, PadIntValue> padInts);
+        void checkReplica();
 
         void getTicket(int ticket);
 
@@ -55,7 +57,7 @@ namespace Interfaces
     public interface RemoteMasterInterface
     {
         bool regPadint(int id, string server);
-        void  regServer(string server);
+        void regServer(string server);
 
         string getServer(int id);
         string requestServer();

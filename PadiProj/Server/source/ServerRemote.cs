@@ -16,6 +16,7 @@ namespace Server.source
     public delegate void RemoteAsyncPrepare(Transaction t, string _coordinatorURL);
     public delegate void RemoteAsyncValidate(Transaction t);
     public delegate bool RemoteAsyncAbort(int ticket);
+    public delegate bool RemoteAsyncReplicated(Dictionary<int, PadIntValue> padInts);
 
     //Commit local changes delegate.
     public delegate void RemoteAsyncCommitLocalChanges(int ticket);
@@ -70,8 +71,12 @@ namespace Server.source
         private string _replicaURL;
         private string _masterURL;
 
+        public AutoResetEvent[] _replicaHandles;
+
         //Padint Database.
         private Dictionary<int, PadIntValue> _padInts;
+        //Replicated PadInts
+        private List<PadIntValue> _padIntsReplicated;
 
         //Last commited Transaction.
         private int _lastTicketTrans;
@@ -83,7 +88,6 @@ namespace Server.source
         //Previous and current state of the server.
         private STATE _status;
         private STATE _prevStatus;
-
 
         ////Active transaction.
         //private Transaction _activeTransaction;
@@ -127,6 +131,7 @@ namespace Server.source
             _tickets.Add(0);
             _transactions = new Dictionary<int, TransactionInfo>();
             _lastTicketTrans = 0;
+            _padIntsReplicated = new List<PadIntValue>();
         }
 
         //Registers this server on the master server.
@@ -548,17 +553,36 @@ namespace Server.source
 
         }
 
+        /*******************Replicação **********************
+         * **************************************************/
+
         public void registerReplica()
         {
             //to be invoked by a replica
             try
             {
-                _master.requestServerReplica(this._ownURL);
+                _replicaURL = _master.requestServerReplica(this._ownURL);
+                _replicaHandles = new AutoResetEvent[0];
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                registerReplica();
+            }
+        }
+
+        public bool replicatedInfo(Dictionary<int, PadIntValue> padInts)
+        {
+            foreach (int pi in padInts.Keys)
+                _padIntsReplicated.Add(padInts[pi]);
+            return true;
+        }
+
+        public void checkReplica()
+        {
+
+            if (!WaitHandle.WaitAll(_replicaHandles, 2000))
+            {
+                _replicaURL = _master.requestServerReplica(this._ownURL);
             }
         }
 
@@ -771,6 +795,12 @@ namespace Server.source
                 //tInfo._partHandlers.Clear();
                 //tInfo._Transaction = null;
                 //tInfo._coordinatorURL = null;
+                checkReplica();
+                RemoteServerInterface serverR = (RemoteServerInterface)Activator.GetObject(
+                typeof(RemoteServerInterface), _replicaURL);
+                RemoteAsyncReplicated repli = new RemoteAsyncReplicated(serverR.replicatedInfo);
+                repli.BeginInvoke(_padInts, null, null);
+
                 Console.WriteLine("Transaction Successfull.");
                 return true;
             }
